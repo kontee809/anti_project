@@ -1,10 +1,13 @@
 import React, { useState, useRef } from 'react';
-import { NavLink, Link } from 'react-router-dom';
-import { Map, LifeBuoy, ShieldAlert, LayoutDashboard, UserCircle, ChevronDown, LogIn, UserPlus, Users } from 'lucide-react';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
+import { Map, LifeBuoy, ShieldAlert, LayoutDashboard, UserCircle, ChevronDown, LogOut, Users } from 'lucide-react';
 import { useClickOutside } from '../../hooks/useClickOutside';
+import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const { role, logout } = useAuth();
+  const navigate = useNavigate();
   
   const supportRef = useRef(null);
   const manageRef = useRef(null);
@@ -25,6 +28,12 @@ const Navbar = () => {
   };
 
   const closeMenu = () => setActiveDropdown(null);
+
+  const handleLogout = () => {
+    logout();
+    closeMenu();
+    navigate('/login');
+  };
 
   const navLinkClass = ({ isActive }) =>
     `flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
@@ -79,30 +88,32 @@ const Navbar = () => {
           )}
         </div>
 
-        <div className="relative" ref={manageRef}>
-          <button 
-            onClick={() => handleDropdownClick('manage')}
-            className={buttonClass(activeDropdown === 'manage')}
-            data-test-id="navbar-menu-manage"
-          >
-            <LayoutDashboard size={18} />
-            <span>Quản lý</span>
-            <ChevronDown size={14} className={`transition-transform duration-200 ${activeDropdown === 'manage' ? 'rotate-180' : ''}`} />
-          </button>
-          
-          {activeDropdown === 'manage' && (
-            <div className="absolute top-[calc(100%+8px)] left-0 w-56 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden py-2 animate-in fade-in zoom-in-95 origin-top-left" data-test-id="navbar-dropdown-manage">
-              <Link to="/management" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium border-b border-slate-50" data-test-id="navbar-dropdown-manage-dashboard">
-                <LayoutDashboard size={16} className="text-indigo-500" />
-                Tổng quan Dashboard
-              </Link>
-              <Link to="/management/users" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium" data-test-id="navbar-dropdown-manage-users">
-                <Users size={16} className="text-emerald-500" />
-                Quản lý User
-              </Link>
-            </div>
-          )}
-        </div>
+        {role === 'ADMIN' && (
+          <div className="relative" ref={manageRef}>
+            <button 
+              onClick={() => handleDropdownClick('manage')}
+              className={buttonClass(activeDropdown === 'manage')}
+              data-test-id="navbar-menu-manage"
+            >
+              <LayoutDashboard size={18} />
+              <span>Quản lý</span>
+              <ChevronDown size={14} className={`transition-transform duration-200 ${activeDropdown === 'manage' ? 'rotate-180' : ''}`} />
+            </button>
+            
+            {activeDropdown === 'manage' && (
+              <div className="absolute top-[calc(100%+8px)] left-0 w-56 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden py-2 animate-in fade-in zoom-in-95 origin-top-left" data-test-id="navbar-dropdown-manage">
+                <Link to="/management" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium border-b border-slate-50" data-test-id="navbar-dropdown-manage-dashboard">
+                  <LayoutDashboard size={16} className="text-indigo-500" />
+                  Tổng quan Dashboard
+                </Link>
+                <Link to="/management/users" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium" data-test-id="navbar-dropdown-manage-users">
+                  <Users size={16} className="text-emerald-500" />
+                  Quản lý User
+                </Link>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="relative" ref={accountRef}>
@@ -113,21 +124,20 @@ const Navbar = () => {
           }`}
           data-test-id="navbar-menu-account"
         >
-          <UserCircle size={20} className="text-slate-400" />
+          <UserCircle size={20} className="text-blue-600" />
           <span>Tài khoản</span>
           <ChevronDown size={14} className={`text-slate-400 transition-transform duration-200 ${activeDropdown === 'account' ? 'rotate-180' : ''}`} />
         </button>
 
         {activeDropdown === 'account' && (
           <div className="absolute top-[calc(100%+8px)] right-0 w-48 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden py-2 animate-in fade-in zoom-in-95 origin-top-right" data-test-id="navbar-dropdown-account">
-            <Link to="/login" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium border-b border-slate-50" data-test-id="navbar-dropdown-account-login">
-              <LogIn size={16} className="text-slate-500" />
-              Đăng nhập
-            </Link>
-            <Link to="/register" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium" data-test-id="navbar-dropdown-account-register">
-              <UserPlus size={16} className="text-slate-500" />
-              Đăng ký mới
-            </Link>
+            <div className="px-4 py-2 border-b border-slate-50 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+              {role === 'ADMIN' ? 'Quản trị viên' : 'Người dùng'}
+            </div>
+            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-sm text-red-600 font-medium transition-colors" data-test-id="navbar-dropdown-account-logout">
+              <LogOut size={16} className="text-red-500" />
+              Đăng xuất
+            </button>
           </div>
         )}
       </div>

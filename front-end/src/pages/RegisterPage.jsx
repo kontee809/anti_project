@@ -1,8 +1,48 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Mail, Lock, User, Map } from 'lucide-react';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Mail, Lock, User, Map, AlertCircle } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const RegisterPage = () => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const { register } = useAuth();
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    if (!name || !email || !password || !confirmPassword) {
+      setError('Vui lòng điền đầy đủ thông tin.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Mật khẩu xác nhận không khớp.');
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('Mật khẩu phải có ít nhất 6 ký tự.');
+      return;
+    }
+
+    setError('');
+    setIsLoading(true);
+
+    const result = await register(name, email, password);
+    
+    if (result.success) {
+      navigate('/');
+    } else {
+      setError(result.message);
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 p-6" data-test-id="register-page">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-100 p-8">
@@ -15,14 +55,24 @@ const RegisterPage = () => {
           <p className="text-slate-500 text-sm mt-2">Dành cho cán bộ giám sát và hỗ trợ</p>
         </div>
 
-        <form className="space-y-4" onSubmit={(e) => e.preventDefault()} data-test-id="register-form">
+        {error && (
+          <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2 text-red-600 font-medium text-sm animate-in fade-in zoom-in duration-300">
+            <AlertCircle size={18} />
+            <p>{error}</p>
+          </div>
+        )}
+
+        <form className="space-y-4" onSubmit={handleRegister} data-test-id="register-form">
           <div className="relative">
             <User className="absolute left-3 top-3.5 text-slate-400" size={20} />
             <input 
               type="text" 
               placeholder="Họ và tên" 
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-medium text-slate-700"
               data-test-id="register-input-name"
+              disabled={isLoading}
             />
           </div>
 
@@ -31,8 +81,11 @@ const RegisterPage = () => {
             <input 
               type="email" 
               placeholder="Email công vụ" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-medium text-slate-700"
               data-test-id="register-input-email"
+              disabled={isLoading}
             />
           </div>
 
@@ -41,8 +94,11 @@ const RegisterPage = () => {
             <input 
               type="password" 
               placeholder="Mật khẩu" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-medium text-slate-700"
               data-test-id="register-input-password"
+              disabled={isLoading}
             />
           </div>
           
@@ -51,13 +107,21 @@ const RegisterPage = () => {
             <input 
               type="password" 
               placeholder="Xác nhận mật khẩu" 
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-medium text-slate-700"
               data-test-id="register-input-confirm"
+              disabled={isLoading}
             />
           </div>
 
-          <button type="submit" className="w-full py-3.5 mt-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg shadow-blue-500/30 transition-all active:scale-[0.98]" data-test-id="register-button-submit">
-            Đăng ký
+          <button 
+            type="submit" 
+            disabled={isLoading}
+            className={`w-full py-3.5 mt-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg shadow-blue-500/30 transition-all active:scale-[0.98] ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+            data-test-id="register-button-submit"
+          >
+            {isLoading ? 'Đang xử lý...' : 'Đăng ký'}
           </button>
         </form>
 
