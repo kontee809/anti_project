@@ -4,8 +4,7 @@ import { Map, LifeBuoy, ShieldAlert, LayoutDashboard, UserCircle, ChevronDown, L
 import { useClickOutside } from '../../hooks/useClickOutside';
 
 const Navbar = () => {
-  // Only one dropdown open at a time
-  const [activeDropdown, setActiveDropdown] = useState(null); // 'support', 'manage', 'account' or null
+  const [activeDropdown, setActiveDropdown] = useState(null);
   
   const supportRef = useRef(null);
   const manageRef = useRef(null);
@@ -29,22 +28,17 @@ const Navbar = () => {
 
   const navLinkClass = ({ isActive }) =>
     `flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-      isActive 
-        ? 'bg-blue-50 text-blue-700' 
-        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+      isActive ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
     }`;
 
   const buttonClass = (isOpen) =>
     `flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
-      isOpen
-        ? 'bg-blue-50 text-blue-700'
-        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+      isOpen ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
     }`;
 
   return (
-    <nav className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-slate-200 z-[2000] shadow-sm flex items-center justify-between px-6">
-      {/* Logo & Brand */}
-      <Link to="/" onClick={closeMenu} className="flex items-center gap-3 group">
+    <nav className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-slate-200 z-[2000] shadow-sm flex items-center justify-between px-6" data-test-id="navbar-container">
+      <Link to="/" onClick={closeMenu} className="flex items-center gap-3 group" data-test-id="navbar-logo-home">
         <div className="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center shadow-md group-hover:bg-blue-700 transition-colors">
           <Map size={24} />
         </div>
@@ -54,18 +48,17 @@ const Navbar = () => {
         </div>
       </Link>
 
-      {/* Main Navigation */}
       <div className="flex items-center gap-2 relative">
-        <NavLink to="/" onClick={closeMenu} className={navLinkClass}>
+        <NavLink to="/" onClick={closeMenu} className={navLinkClass} data-test-id="navbar-menu-map">
           <Map size={18} />
           <span>Bản đồ</span>
         </NavLink>
 
-        {/* Dropdown: Trợ giúp */}
         <div className="relative" ref={supportRef}>
           <button 
             onClick={() => handleDropdownClick('support')}
             className={buttonClass(activeDropdown === 'support')}
+            data-test-id="navbar-menu-support"
           >
             <LifeBuoy size={18} />
             <span>Trợ giúp</span>
@@ -73,12 +66,12 @@ const Navbar = () => {
           </button>
           
           {activeDropdown === 'support' && (
-            <div className="absolute top-[calc(100%+8px)] left-0 w-56 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden py-2 animate-in fade-in zoom-in-95 origin-top-left">
-              <Link to="/report" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium border-b border-slate-50">
+            <div className="absolute top-[calc(100%+8px)] left-0 w-56 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden py-2 animate-in fade-in zoom-in-95 origin-top-left" data-test-id="navbar-dropdown-support">
+              <Link to="/report" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium border-b border-slate-50" data-test-id="navbar-dropdown-support-report">
                 <ShieldAlert size={16} className="text-orange-500" />
                 Gửi thông tin ngập
               </Link>
-              <Link to="/support" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium">
+              <Link to="/support" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium" data-test-id="navbar-dropdown-support-request">
                 <LifeBuoy size={16} className="text-blue-500" />
                 Yêu cầu trợ giúp
               </Link>
@@ -86,11 +79,11 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Dropdown: Quản lý */}
         <div className="relative" ref={manageRef}>
           <button 
             onClick={() => handleDropdownClick('manage')}
             className={buttonClass(activeDropdown === 'manage')}
+            data-test-id="navbar-menu-manage"
           >
             <LayoutDashboard size={18} />
             <span>Quản lý</span>
@@ -98,12 +91,12 @@ const Navbar = () => {
           </button>
           
           {activeDropdown === 'manage' && (
-            <div className="absolute top-[calc(100%+8px)] left-0 w-56 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden py-2 animate-in fade-in zoom-in-95 origin-top-left">
-              <Link to="/management" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium border-b border-slate-50">
+            <div className="absolute top-[calc(100%+8px)] left-0 w-56 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden py-2 animate-in fade-in zoom-in-95 origin-top-left" data-test-id="navbar-dropdown-manage">
+              <Link to="/management" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium border-b border-slate-50" data-test-id="navbar-dropdown-manage-dashboard">
                 <LayoutDashboard size={16} className="text-indigo-500" />
                 Tổng quan Dashboard
               </Link>
-              <Link to="/management/users" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium">
+              <Link to="/management/users" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium" data-test-id="navbar-dropdown-manage-users">
                 <Users size={16} className="text-emerald-500" />
                 Quản lý User
               </Link>
@@ -112,15 +105,13 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Right Side: Account Dropdown */}
       <div className="relative" ref={accountRef}>
         <button 
           onClick={() => handleDropdownClick('account')}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all border shadow-sm ${
-            activeDropdown === 'account' 
-              ? 'bg-slate-50 text-slate-800 border-slate-300' 
-              : 'text-slate-600 hover:bg-slate-50 border-slate-200'
+            activeDropdown === 'account' ? 'bg-slate-50 text-slate-800 border-slate-300' : 'text-slate-600 hover:bg-slate-50 border-slate-200'
           }`}
+          data-test-id="navbar-menu-account"
         >
           <UserCircle size={20} className="text-slate-400" />
           <span>Tài khoản</span>
@@ -128,12 +119,12 @@ const Navbar = () => {
         </button>
 
         {activeDropdown === 'account' && (
-          <div className="absolute top-[calc(100%+8px)] right-0 w-48 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden py-2 animate-in fade-in zoom-in-95 origin-top-right">
-            <Link to="/login" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium border-b border-slate-50">
+          <div className="absolute top-[calc(100%+8px)] right-0 w-48 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden py-2 animate-in fade-in zoom-in-95 origin-top-right" data-test-id="navbar-dropdown-account">
+            <Link to="/login" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium border-b border-slate-50" data-test-id="navbar-dropdown-account-login">
               <LogIn size={16} className="text-slate-500" />
               Đăng nhập
             </Link>
-            <Link to="/register" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium">
+            <Link to="/register" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium" data-test-id="navbar-dropdown-account-register">
               <UserPlus size={16} className="text-slate-500" />
               Đăng ký mới
             </Link>

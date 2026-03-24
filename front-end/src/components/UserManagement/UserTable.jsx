@@ -10,21 +10,20 @@ const getRoleColor = (role) => {
 };
 
 const getStatusColor = (status) => {
-  return status === 'Active' 
-    ? 'bg-emerald-100 text-emerald-700 border-emerald-200' 
-    : 'bg-red-100 text-red-700 border-red-200';
+  return status === 'Active' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-red-100 text-red-700 border-red-200';
 };
 
 const UserTable = ({ users, onEdit, onDelete, onSort }) => {
   return (
     <div className="w-full overflow-x-auto">
-      <table className="w-full text-left border-collapse">
+      <table className="w-full text-left border-collapse" data-test-id="user-table">
         <thead>
           <tr className="bg-slate-50 border-b border-slate-200">
             <th className="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">ID</th>
             <th 
               className="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100 transition-colors group"
               onClick={() => onSort('name')}
+              data-test-id="user-table-header-name"
             >
               <div className="flex items-center gap-1">Họ và Tên <ArrowUpDown size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" /></div>
             </th>
@@ -34,6 +33,7 @@ const UserTable = ({ users, onEdit, onDelete, onSort }) => {
             <th 
               className="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100 transition-colors group"
               onClick={() => onSort('createdAt')}
+              data-test-id="user-table-header-date"
             >
               <div className="flex items-center gap-1">Ngày tạo <ArrowUpDown size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" /></div>
             </th>
@@ -42,7 +42,7 @@ const UserTable = ({ users, onEdit, onDelete, onSort }) => {
         </thead>
         <tbody className="divide-y divide-slate-100">
           {users.map((user) => (
-            <tr key={user.id} className="hover:bg-slate-50/80 transition-colors group">
+            <tr key={user.id} className="hover:bg-slate-50/80 transition-colors group" data-test-id={`user-table-row-${user.id}`}>
               <td className="p-4 text-sm font-semibold text-slate-600">{user.id}</td>
               <td className="p-4 text-sm font-bold text-slate-800">{user.name}</td>
               <td className="p-4 text-sm font-medium text-slate-500">{user.email}</td>
@@ -66,6 +66,7 @@ const UserTable = ({ users, onEdit, onDelete, onSort }) => {
                     onClick={() => onEdit(user)}
                     className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                     title="Chỉnh sửa"
+                    data-test-id={`user-table-button-edit-${user.id}`}
                   >
                     <Pencil size={16} />
                   </button>
@@ -77,6 +78,7 @@ const UserTable = ({ users, onEdit, onDelete, onSort }) => {
                     }}
                     className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                     title="Xóa"
+                    data-test-id={`user-table-button-delete-${user.id}`}
                   >
                     <Trash2 size={16} />
                   </button>

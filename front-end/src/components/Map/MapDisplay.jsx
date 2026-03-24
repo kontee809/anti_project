@@ -7,7 +7,6 @@ import { useMapStore } from '../../store/useMapStore';
 import { waterLevelStations, rainfallStations, warningTowers } from '../../data/mockData';
 import MarkerPopup from './MarkerPopup';
 
-// Hook-based component to programmatically control Leaflet's map view
 const MapController = ({ targetCoord, zoomLevel }) => {
   const map = useMap();
   useEffect(() => {
@@ -50,7 +49,6 @@ const MapDisplay = () => {
   const [activeMarkerId, setActiveMarkerId] = useState(null);
   const [flyToTarget, setFlyToTarget] = useState(null);
 
-  // Optional real-time simulation update
   useEffect(() => {
     const interval = setInterval(() => setTimestamp(Date.now()), 5000);
     return () => clearInterval(interval);
@@ -62,92 +60,92 @@ const MapDisplay = () => {
   };
 
   return (
-    <MapContainer 
-      center={mapCenter} 
-      zoom={mapZoom} 
-      zoomControl={false}
-      className="w-full h-full !bg-blue-50/50"
-      onClick={() => setActiveMarkerId(null)}
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-      />
-      <ZoomControl position="bottomleft" />
-      
-      <MapController targetCoord={flyToTarget} zoomLevel={14} />
-
-      {/* Water Level Layer */}
-      {activeLayers.waterLevel && waterLevelStations.map((station) => {
-        const simulatedValue = (station.value + Math.sin(timestamp / 1000 + Number(station.id.split('-')[1])) * 5).toFixed(1);
-        const isActive = activeMarkerId === station.id;
+    <div className="w-full h-full" data-test-id="map-container-wrapper">
+      <MapContainer 
+        center={mapCenter} 
+        zoom={mapZoom} 
+        zoomControl={false}
+        className="w-full h-full !bg-blue-50/50"
+        onClick={() => setActiveMarkerId(null)}
+        data-test-id="map-container"
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+        />
+        <ZoomControl position="bottomleft" />
         
-        return (
-          <Marker 
-            key={station.id} 
-            position={station.coordinates}
-            icon={createCustomIcon(<Droplets size={isActive ? 20 : 16} />, getWaterLevelColor(station.status), isActive)}
-            eventHandlers={{
-              click: () => handleMarkerClick(station)
-            }}
-          >
-            <Popup 
-              className="custom-popup border-0 bg-transparent m-0 p-0"
-              onClose={() => setActiveMarkerId(null)}
-            >
-              <MarkerPopup data={{...station, value: simulatedValue}} />
-            </Popup>
-          </Marker>
-        );
-      })}
+        <MapController targetCoord={flyToTarget} zoomLevel={14} />
 
-      {/* Rainfall Layer */}
-      {activeLayers.rainfall && rainfallStations.map((station) => {
-        const isActive = activeMarkerId === station.id;
-        
-        return (
-          <Marker 
-            key={station.id} 
-            position={station.coordinates}
-            icon={createCustomIcon(<CloudRain size={isActive ? 20 : 16} />, 'bg-indigo-500', isActive)}
-            eventHandlers={{
-              click: () => handleMarkerClick(station)
-            }}
-          >
-            <Popup 
-              className="custom-popup border-0 bg-transparent m-0 p-0"
-              onClose={() => setActiveMarkerId(null)}
+        {activeLayers.waterLevel && waterLevelStations.map((station) => {
+          const simulatedValue = (station.value + Math.sin(timestamp / 1000 + Number(station.id.split('-')[1])) * 5).toFixed(1);
+          const isActive = activeMarkerId === station.id;
+          
+          return (
+            <Marker 
+              key={station.id} 
+              position={station.coordinates}
+              icon={createCustomIcon(<Droplets size={isActive ? 20 : 16} />, getWaterLevelColor(station.status), isActive)}
+              eventHandlers={{ click: () => handleMarkerClick(station) }}
             >
-              <MarkerPopup data={station} />
-            </Popup>
-          </Marker>
-        );
-      })}
+              <Popup 
+                className="custom-popup border-0 bg-transparent m-0 p-0"
+                onClose={() => setActiveMarkerId(null)}
+              >
+                <div data-test-id={`map-marker-waterLevel-${station.id}`}>
+                  <MarkerPopup data={{...station, value: simulatedValue}} />
+                </div>
+              </Popup>
+            </Marker>
+          );
+        })}
 
-      {/* Warning Towers Layer */}
-      {activeLayers.warnings && warningTowers.map((tower) => {
-        if (!tower.active) return null;
-        const isActive = activeMarkerId === tower.id;
-        
-        return (
-          <Marker 
-            key={tower.id} 
-            position={tower.coordinates}
-            icon={createCustomIcon(<TriangleAlert size={isActive ? 20 : 16} />, isActive ? 'bg-red-500' : 'bg-red-600 animate-[pulse_1.5s_ease-in-out_infinite]', isActive)}
-            eventHandlers={{
-              click: () => handleMarkerClick(tower)
-            }}
-          >
-            <Popup 
-              className="custom-popup border-0 bg-transparent m-0 p-0"
-              onClose={() => setActiveMarkerId(null)}
+        {activeLayers.rainfall && rainfallStations.map((station) => {
+          const isActive = activeMarkerId === station.id;
+          
+          return (
+            <Marker 
+              key={station.id} 
+              position={station.coordinates}
+              icon={createCustomIcon(<CloudRain size={isActive ? 20 : 16} />, 'bg-indigo-500', isActive)}
+              eventHandlers={{ click: () => handleMarkerClick(station) }}
             >
-              <MarkerPopup data={tower} />
-            </Popup>
-          </Marker>
-        );
-      })}
-    </MapContainer>
+              <Popup 
+                className="custom-popup border-0 bg-transparent m-0 p-0"
+                onClose={() => setActiveMarkerId(null)}
+              >
+                <div data-test-id={`map-marker-rainfall-${station.id}`}>
+                  <MarkerPopup data={station} />
+                </div>
+              </Popup>
+            </Marker>
+          );
+        })}
+
+        {activeLayers.warnings && warningTowers.map((tower) => {
+          if (!tower.active) return null;
+          const isActive = activeMarkerId === tower.id;
+          
+          return (
+            <Marker 
+              key={tower.id} 
+              position={tower.coordinates}
+              icon={createCustomIcon(<TriangleAlert size={isActive ? 20 : 16} />, isActive ? 'bg-red-500' : 'bg-red-600 animate-[pulse_1.5s_ease-in-out_infinite]', isActive)}
+              eventHandlers={{ click: () => handleMarkerClick(tower) }}
+            >
+              <Popup 
+                className="custom-popup border-0 bg-transparent m-0 p-0"
+                onClose={() => setActiveMarkerId(null)}
+              >
+                <div data-test-id={`map-marker-warnings-${tower.id}`}>
+                  <MarkerPopup data={tower} />
+                </div>
+              </Popup>
+            </Marker>
+          );
+        })}
+      </MapContainer>
+    </div>
   );
 };
 

@@ -12,7 +12,7 @@ const LayerControl = () => {
   ];
 
   return (
-    <div className="bg-white/90 backdrop-blur-md shadow-xl rounded-2xl p-5 border border-white/50 w-full">
+    <div className="bg-white/90 backdrop-blur-md shadow-xl rounded-2xl p-5 border border-white/50 w-full" data-test-id="map-layer-control">
       <div className="flex items-center gap-2 mb-5 pb-3 border-b border-slate-200">
         <Layers className="text-slate-400" size={18} />
         <h3 className="font-bold tracking-tight text-slate-800">Lớp Dữ Liệu</h3>
@@ -20,7 +20,7 @@ const LayerControl = () => {
       
       <div className="space-y-4">
         {layers.map((layer) => (
-          <label key={layer.id} className="flex items-center justify-between cursor-pointer group">
+          <label key={layer.id} className="flex items-center justify-between cursor-pointer group" data-test-id={`map-layer-${layer.id}-label`}>
             <div className="flex items-center gap-3">
               <div className={`p-2 rounded-xl transition-all duration-300 shadow-sm border border-slate-100 ${activeLayers[layer.id] ? 'bg-white shadow-slate-200' : 'bg-slate-50'}`}>
                 {layer.icon}
@@ -30,7 +30,6 @@ const LayerControl = () => {
               </span>
             </div>
             
-            {/* Custom Premium Toggle Switch */}
             <div className={`relative w-12 h-6 rounded-full transition-all duration-300 shadow-inner ${activeLayers[layer.id] ? 'bg-blue-500' : 'bg-slate-200'}`}>
               <div className={`absolute top-1 bg-white w-4 h-4 rounded-full shadow-md transition-transform duration-300 ${activeLayers[layer.id] ? 'left-7 object-scale-down' : 'left-1'}`}></div>
               <input 
@@ -38,6 +37,7 @@ const LayerControl = () => {
                 className="sr-only" 
                 checked={activeLayers[layer.id]} 
                 onChange={() => toggleLayer(layer.id)} 
+                data-test-id={`map-layer-${layer.id}-toggle`}
               />
             </div>
           </label>

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Activity, ShieldAlert, Waves, MapPin, Users, PhoneCall } from 'lucide-react';
 
-const StatCard = ({ title, value, subtitle, icon, color }) => (
-  <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+const StatCard = ({ title, value, subtitle, icon, color, testId }) => (
+  <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow" data-test-id={testId}>
     <div className="flex justify-between items-start">
       <div>
         <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">{title}</p>
@@ -18,7 +18,7 @@ const StatCard = ({ title, value, subtitle, icon, color }) => (
 
 const ManagementPage = () => {
   return (
-    <div className="p-8 max-w-7xl mx-auto w-full">
+    <div className="p-8 max-w-7xl mx-auto w-full" data-test-id="management-dashboard">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-slate-800">Tổng quan quản lý</h1>
         <p className="text-slate-500 mt-2 font-medium">Bảng thông tin thống kê dữ liệu hệ thống ngập lụt</p>
@@ -31,6 +31,7 @@ const ManagementPage = () => {
           subtitle="Tăng 12 điểm so với hôm qua"
           icon={<Waves size={24} />}
           color="bg-blue-500"
+          testId="management-card-floods"
         />
         <StatCard 
           title="Yêu cầu cứu trợ" 
@@ -38,6 +39,7 @@ const ManagementPage = () => {
           subtitle="7 chưa xử lý, 11 đang điều phối"
           icon={<PhoneCall size={24} />}
           color="bg-red-500"
+          testId="management-card-requests"
         />
         <StatCard 
           title="Trạm cảm biến" 
@@ -45,19 +47,20 @@ const ManagementPage = () => {
           subtitle="118 trạm hoạt động bình thường"
           icon={<Activity size={24} />}
           color="bg-emerald-500"
+          testId="management-card-sensors"
         />
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6" data-test-id="management-activity-section">
         <h2 className="text-lg font-bold text-slate-800 mb-4">Hoạt động gần đây</h2>
-        <div className="space-y-4">
+        <div className="space-y-4" data-test-id="management-activity-list">
           {[
             { a: 'Phát hiện điểm ngập sâu >50cm tại Hòa Vang', t: '10 phút trước', icon: <ShieldAlert size={16} className="text-orange-500" /> },
             { a: 'Tiếp nhận yêu cầu cứu trợ khẩn cấp số #420', t: '25 phút trước', icon: <PhoneCall size={16} className="text-red-500" /> },
             { a: 'Trạm cảm biến Liên Chiểu cập nhật Mức nước: An toàn', t: '1 giờ trước', icon: <MapPin size={16} className="text-blue-500" /> },
             { a: 'Báo cáo điểm ngã đổ cây mới ghi nhận', t: '2 giờ trước', icon: <Users size={16} className="text-slate-500" /> },
           ].map((item, id) => (
-            <div key={id} className="flex items-center gap-4 p-3 hover:bg-slate-50 rounded-xl transition-colors">
+            <div key={id} className="flex items-center gap-4 p-3 hover:bg-slate-50 rounded-xl transition-colors" data-test-id={`management-activity-item-${id}`}>
               <div className="p-2 bg-slate-100 rounded-lg">{item.icon}</div>
               <div className="flex-1">
                 <p className="text-sm font-semibold text-slate-700">{item.a}</p>

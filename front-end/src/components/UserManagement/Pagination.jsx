@@ -5,8 +5,8 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   if (totalPages <= 1) return null;
 
   return (
-    <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100 bg-slate-50 rounded-b-2xl shadow-inner">
-      <span className="text-sm text-slate-500 font-medium">
+    <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100 bg-slate-50 rounded-b-2xl shadow-inner" data-test-id="pagination-container">
+      <span className="text-sm text-slate-500 font-medium" data-test-id="pagination-text-current">
         Trang <span className="font-bold text-slate-800">{currentPage}</span> / {totalPages}
       </span>
       
@@ -15,6 +15,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
           className="p-2 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          data-test-id="pagination-button-prev"
         >
           <ChevronLeft size={18} />
         </button>
@@ -22,6 +23,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
           className="p-2 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          data-test-id="pagination-button-next"
         >
           <ChevronRight size={18} />
         </button>
