@@ -1,0 +1,16 @@
+/home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/entity/User.java
+/home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/dto/RegisterRequest.java
+/home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/entity/Role.java
+/home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/repository/UserRepository.java
+/home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/controller/GlobalExceptionHandler.java
+/home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/controller/AuthenticationController.java
+/home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/config/ApplicationConfig.java
+/home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/dto/AuthenticationRequest.java
+/home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/security/JwtService.java
+/home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/service/AuthenticationService.java
+/home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/config/WebConfig.java
+/home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/config/SecurityConfig.java
+/home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/BackendApplication.java
+/home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/entity/Status.java
+/home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/dto/AuthenticationResponse.java
+/home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/security/JwtAuthenticationFilter.java
