@@ -1,0 +1,147 @@
+import React, { useState, useRef } from 'react';
+import { NavLink, Link } from 'react-router-dom';
+import { Map, LifeBuoy, ShieldAlert, LayoutDashboard, UserCircle, ChevronDown, LogIn, UserPlus, Users } from 'lucide-react';
+import { useClickOutside } from '../../hooks/useClickOutside';
+
+const Navbar = () => {
+  // Only one dropdown open at a time
+  const [activeDropdown, setActiveDropdown] = useState(null); // 'support', 'manage', 'account' or null
+  
+  const supportRef = useRef(null);
+  const manageRef = useRef(null);
+  const accountRef = useRef(null);
+
+  useClickOutside(supportRef, () => {
+    if (activeDropdown === 'support') setActiveDropdown(null);
+  });
+  useClickOutside(manageRef, () => {
+    if (activeDropdown === 'manage') setActiveDropdown(null);
+  });
+  useClickOutside(accountRef, () => {
+    if (activeDropdown === 'account') setActiveDropdown(null);
+  });
+
+  const handleDropdownClick = (dropdownName) => {
+    setActiveDropdown(activeDropdown === dropdownName ? null : dropdownName);
+  };
+
+  const closeMenu = () => setActiveDropdown(null);
+
+  const navLinkClass = ({ isActive }) =>
+    `flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+      isActive 
+        ? 'bg-blue-50 text-blue-700' 
+        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+    }`;
+
+  const buttonClass = (isOpen) =>
+    `flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
+      isOpen
+        ? 'bg-blue-50 text-blue-700'
+        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+    }`;
+
+  return (
+    <nav className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-slate-200 z-[2000] shadow-sm flex items-center justify-between px-6">
+      {/* Logo & Brand */}
+      <Link to="/" onClick={closeMenu} className="flex items-center gap-3 group">
+        <div className="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center shadow-md group-hover:bg-blue-700 transition-colors">
+          <Map size={24} />
+        </div>
+        <div>
+          <h1 className="text-lg font-bold text-slate-800 leading-tight">Thủy Phổ Minh</h1>
+          <p className="text-[10px] text-slate-500 uppercase font-semibold tracking-wider">Hệ thống giám sát</p>
+        </div>
+      </Link>
+
+      {/* Main Navigation */}
+      <div className="flex items-center gap-2 relative">
+        <NavLink to="/" onClick={closeMenu} className={navLinkClass}>
+          <Map size={18} />
+          <span>Bản đồ</span>
+        </NavLink>
+
+        {/* Dropdown: Trợ giúp */}
+        <div className="relative" ref={supportRef}>
+          <button 
+            onClick={() => handleDropdownClick('support')}
+            className={buttonClass(activeDropdown === 'support')}
+          >
+            <LifeBuoy size={18} />
+            <span>Trợ giúp</span>
+            <ChevronDown size={14} className={`transition-transform duration-200 ${activeDropdown === 'support' ? 'rotate-180' : ''}`} />
+          </button>
+          
+          {activeDropdown === 'support' && (
+            <div className="absolute top-[calc(100%+8px)] left-0 w-56 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden py-2 animate-in fade-in zoom-in-95 origin-top-left">
+              <Link to="/report" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium border-b border-slate-50">
+                <ShieldAlert size={16} className="text-orange-500" />
+                Gửi thông tin ngập
+              </Link>
+              <Link to="/support" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium">
+                <LifeBuoy size={16} className="text-blue-500" />
+                Yêu cầu trợ giúp
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* Dropdown: Quản lý */}
+        <div className="relative" ref={manageRef}>
+          <button 
+            onClick={() => handleDropdownClick('manage')}
+            className={buttonClass(activeDropdown === 'manage')}
+          >
+            <LayoutDashboard size={18} />
+            <span>Quản lý</span>
+            <ChevronDown size={14} className={`transition-transform duration-200 ${activeDropdown === 'manage' ? 'rotate-180' : ''}`} />
+          </button>
+          
+          {activeDropdown === 'manage' && (
+            <div className="absolute top-[calc(100%+8px)] left-0 w-56 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden py-2 animate-in fade-in zoom-in-95 origin-top-left">
+              <Link to="/management" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium border-b border-slate-50">
+                <LayoutDashboard size={16} className="text-indigo-500" />
+                Tổng quan Dashboard
+              </Link>
+              <Link to="/management/users" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium">
+                <Users size={16} className="text-emerald-500" />
+                Quản lý User
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Right Side: Account Dropdown */}
+      <div className="relative" ref={accountRef}>
+        <button 
+          onClick={() => handleDropdownClick('account')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all border shadow-sm ${
+            activeDropdown === 'account' 
+              ? 'bg-slate-50 text-slate-800 border-slate-300' 
+              : 'text-slate-600 hover:bg-slate-50 border-slate-200'
+          }`}
+        >
+          <UserCircle size={20} className="text-slate-400" />
+          <span>Tài khoản</span>
+          <ChevronDown size={14} className={`text-slate-400 transition-transform duration-200 ${activeDropdown === 'account' ? 'rotate-180' : ''}`} />
+        </button>
+
+        {activeDropdown === 'account' && (
+          <div className="absolute top-[calc(100%+8px)] right-0 w-48 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden py-2 animate-in fade-in zoom-in-95 origin-top-right">
+            <Link to="/login" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium border-b border-slate-50">
+              <LogIn size={16} className="text-slate-500" />
+              Đăng nhập
+            </Link>
+            <Link to="/register" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium">
+              <UserPlus size={16} className="text-slate-500" />
+              Đăng ký mới
+            </Link>
+          </div>
+        )}
+      </div>
+    </nav>
+  );
+};
+
+export default Navbar;
