@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Activity, ShieldAlert, Waves, MapPin, Users, PhoneCall } from 'lucide-react';
+import { getAdminRescueStats } from '../services/api';
 
 const StatCard = ({ title, value, subtitle, icon, color, testId }) => (
   <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow" data-test-id={testId}>
@@ -17,6 +18,29 @@ const StatCard = ({ title, value, subtitle, icon, color, testId }) => (
 );
 
 const ManagementPage = () => {
+  const [rescueStats, setRescueStats] = useState({
+    total: 0,
+    pending: 0,
+    received: 0,
+    inProgress: 0,
+    completed: 0,
+    cancelled: 0
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const stats = await getAdminRescueStats();
+        setRescueStats(stats);
+      } catch (error) {
+        console.error("Error fetching rescue stats", error);
+      }
+    };
+    fetchStats();
+    const interval = setInterval(fetchStats, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="p-8 max-w-7xl mx-auto w-full" data-test-id="management-dashboard">
       <div className="mb-8">
@@ -35,8 +59,8 @@ const ManagementPage = () => {
         />
         <StatCard 
           title="Yêu cầu cứu trợ" 
-          value="18" 
-          subtitle="7 chưa xử lý, 11 đang điều phối"
+          value={rescueStats.total} 
+          subtitle={`${rescueStats.pending} chưa xử lý, ${rescueStats.inProgress} đang điều phối, ${rescueStats.completed} hoàn thành`}
           icon={<PhoneCall size={24} />}
           color="bg-red-500"
           testId="management-card-requests"
