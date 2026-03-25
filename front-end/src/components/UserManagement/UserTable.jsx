@@ -13,7 +13,7 @@ const getStatusColor = (status) => {
   return status === 'Active' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-red-100 text-red-700 border-red-200';
 };
 
-const UserTable = ({ users, onEdit, onDelete, onSort }) => {
+const UserTable = ({ users, onEdit, onDelete, onSort, currentUserEmail }) => {
   return (
     <div className="w-full overflow-x-auto">
       <table className="w-full text-left border-collapse" data-test-id="user-table">
@@ -70,18 +70,31 @@ const UserTable = ({ users, onEdit, onDelete, onSort }) => {
                   >
                     <Pencil size={16} />
                   </button>
-                  <button 
-                    onClick={() => {
-                      if(window.confirm(`Bạn có chắc chắn muốn xóa người dùng ${user.name}?`)) {
-                        onDelete(user.id);
-                      }
-                    }}
-                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                    title="Xóa"
-                    data-test-id={`user-table-button-delete-${user.id}`}
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                  {(() => {
+                    const isSelf = user.email === currentUserEmail;
+                    const isAnotherAdmin = user.role === 'ADMIN' && !isSelf;
+                    const isDisabled = isSelf || isAnotherAdmin;
+                    
+                    let tooltip = "Xóa";
+                    if (isSelf) tooltip = "Không thể xoá chính mình";
+                    else if (isAnotherAdmin) tooltip = "Không thể xoá quản trị viên khác";
+                    
+                    return (
+                      <button 
+                        onClick={() => {
+                          if(!isDisabled && window.confirm(`Bạn có chắc chắn muốn xóa người dùng ${user.name}?`)) {
+                            onDelete(user.id);
+                          }
+                        }}
+                        disabled={isDisabled}
+                        className={`p-2 rounded-lg transition-colors ${isDisabled ? 'text-slate-300 cursor-not-allowed' : 'text-slate-400 hover:text-red-600 hover:bg-red-50'}`}
+                        title={tooltip}
+                        data-test-id={`user-table-button-delete-${user.id}`}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    );
+                  })()}
                 </div>
               </td>
             </tr>
