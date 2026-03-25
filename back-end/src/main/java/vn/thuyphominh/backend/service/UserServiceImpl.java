@@ -94,10 +94,6 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Cannot delete another ADMIN's account");
         }
 
-        if (targetUser.getRole() == vn.thuyphominh.backend.entity.Role.ADMIN && userRepository.countByRole(vn.thuyphominh.backend.entity.Role.ADMIN) <= 1) {
-            throw new IllegalArgumentException("Cannot delete the last ADMIN in the system");
-        }
-
         userRepository.deleteById(id);
     }
 
