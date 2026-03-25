@@ -58,4 +58,39 @@ export const updateRescueStatus = async (id, action, payload = {}) => {
   return response.data;
 };
 
+export const getAdminStations = async () => {
+  const response = await api.get('/admin/stations');
+  return response.data;
+};
+
+export const createAdminStation = async (data) => {
+  const response = await api.post('/admin/stations', data);
+  return response.data;
+};
+
+export const updateAdminStation = async (id, data) => {
+  const response = await api.put(`/admin/stations/${id}`, data);
+  return response.data;
+};
+
+export const deleteAdminStation = async (id) => {
+  const response = await api.delete(`/admin/stations/${id}`);
+  return response.data;
+};
+
+export const getPublicStations = async () => {
+  const response = await api.get('/stations');
+  return response.data;
+};
+
+export const getStationHistory = async (id) => {
+  const response = await api.get(`/stations/${id}/history`);
+  return response.data;
+};
+
+export const getStationStats = async () => {
+  const response = await api.get('/stations/stats');
+  return response.data;
+};
+
 export default api;

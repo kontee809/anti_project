@@ -9,6 +9,8 @@ import UserManagementPage from './pages/UserManagementPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import RescueManagementPage from './pages/RescueManagementPage';
+import StationManagementPage from './pages/StationManagementPage';
+import StationDetailPage from './pages/StationDetailPage';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 
@@ -25,6 +27,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<PageLayout />}>
               <Route path="/" element={<MapPage />} />
+              <Route path="/stations/:id" element={<StationDetailPage />} />
               <Route path="/report" element={<ReportFloodPage />} />
               <Route path="/support" element={<SupportRequestPage />} />
               
@@ -32,6 +35,7 @@ function App() {
               <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
                 <Route path="/management" element={<ManagementPage />} />
                 <Route path="/management/rescue" element={<RescueManagementPage />} />
+                <Route path="/management/stations" element={<StationManagementPage />} />
                 <Route path="/management/users" element={<UserManagementPage />} />
               </Route>
             </Route>

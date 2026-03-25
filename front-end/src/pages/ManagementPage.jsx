@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, ShieldAlert, Waves, MapPin, Users, PhoneCall } from 'lucide-react';
-import { getAdminRescueStats } from '../services/api';
+import { Activity, ShieldAlert, Waves, MapPin, Users, PhoneCall, AlertCircle } from 'lucide-react';
+import { getAdminRescueStats, getStationStats } from '../services/api';
 
 const StatCard = ({ title, value, subtitle, icon, color, testId }) => (
   <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow" data-test-id={testId}>
@@ -27,13 +27,25 @@ const ManagementPage = () => {
     cancelled: 0
   });
 
+  const [stationStats, setStationStats] = useState({
+    total: 0,
+    normal: 0,
+    warning: 0,
+    danger: 0,
+    offline: 0
+  });
+
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const stats = await getAdminRescueStats();
-        setRescueStats(stats);
+        const [rStats, sStats] = await Promise.all([
+          getAdminRescueStats().catch(() => null),
+          getStationStats().catch(() => null)
+        ]);
+        if (rStats) setRescueStats(rStats);
+        if (sStats) setStationStats(sStats);
       } catch (error) {
-        console.error("Error fetching rescue stats", error);
+        console.error("Error fetching dashboard stats", error);
       }
     };
     fetchStats();
@@ -43,6 +55,16 @@ const ManagementPage = () => {
 
   return (
     <div className="p-8 max-w-7xl mx-auto w-full" data-test-id="management-dashboard">
+      {stationStats.danger > 0 && (
+        <div className="mb-6 bg-red-50 border-l-4 border-red-600 p-4 rounded-r-xl flex items-start gap-4 shadow-sm animate-[pulse_2s_ease-in-out_infinite]">
+            <AlertCircle className="text-red-600 mt-1" size={24} />
+            <div>
+              <h3 className="font-bold text-red-800 text-lg uppercase tracking-wide">CẢNH BÁO KHẨN CẤP</h3>
+              <p className="text-sm text-red-700 mt-1">Phát hiện <strong>{stationStats.danger}</strong> trạm đo mực nước đang ở mức NGUY HIỂM. Vui lòng kiểm tra bản đồ ngay!</p>
+            </div>
+        </div>
+      )}
+      
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-slate-800">Tổng quan quản lý</h1>
         <p className="text-slate-500 mt-2 font-medium">Bảng thông tin thống kê dữ liệu hệ thống ngập lụt</p>
@@ -67,8 +89,8 @@ const ManagementPage = () => {
         />
         <StatCard 
           title="Trạm cảm biến" 
-          value="120" 
-          subtitle="118 trạm hoạt động bình thường"
+          value={stationStats.total} 
+          subtitle={`${stationStats.normal} an toàn, ${stationStats.warning} báo động, ${stationStats.offline} mất kết nối`}
           icon={<Activity size={24} />}
           color="bg-emerald-500"
           testId="management-card-sensors"
