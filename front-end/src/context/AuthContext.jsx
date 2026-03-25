@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await api.post('/api/auth/login', { email, password });
+      const response = await api.post('/auth/login', { email, password });
       const { token: newToken, role: newRole } = response.data;
       
       localStorage.setItem('token', newToken);
@@ -32,9 +32,9 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (name, email, password) => {
     try {
-      await api.post('/api/auth/register', { name, email, password });
+      await api.post('/auth/register', { name, email, password });
       
-      const loginResponse = await api.post('/api/auth/login', { email, password });
+      const loginResponse = await api.post('/auth/login', { email, password });
       const { token: newToken, role: newRole } = loginResponse.data;
       
       localStorage.setItem('token', newToken);
@@ -67,4 +67,5 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => useContext(AuthContext);

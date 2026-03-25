@@ -4,7 +4,7 @@ import L from 'leaflet';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Droplets, CloudRain, TriangleAlert, LifeBuoy } from 'lucide-react';
 import { useMapStore } from '../../store/useMapStore';
-import { waterLevelStations, rainfallStations, warningTowers } from '../../data/mockData';
+import { rainfallStations, warningTowers } from '../../data/mockData';
 import MarkerPopup from './MarkerPopup';
 import { getRescueRequests, getPublicStations } from '../../services/api';
 
@@ -47,7 +47,6 @@ const getWaterLevelColor = (status) => {
 
 const MapDisplay = () => {
   const { activeLayers, mapCenter, mapZoom } = useMapStore();
-  const [timestamp, setTimestamp] = useState(Date.now());
   const [activeMarkerId, setActiveMarkerId] = useState(null);
   const [flyToTarget, setFlyToTarget] = useState(null);
   const [rescueRequests, setRescueRequests] = useState([]);

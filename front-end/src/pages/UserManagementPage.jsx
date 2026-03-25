@@ -38,7 +38,7 @@ const UserManagementPage = () => {
     try {
       const data = await getUsers();
       setUsers(data);
-    } catch (error) {
+    } catch {
       // Error is handled globally by userService handleApiError
     } finally {
       setIsLoading(false);
@@ -59,7 +59,7 @@ const UserManagementPage = () => {
         try {
           const data = await searchUsers(searchTerm);
           setUsers(data);
-        } catch (error) {
+        } catch {
           // Handled globally
         } finally {
           setIsLoading(false);
@@ -130,7 +130,7 @@ const UserManagementPage = () => {
       } else {
          fetchUsersData();
       }
-    } catch (error) {
+    } catch {
       // Handled globally
     }
   };
@@ -142,7 +142,7 @@ const UserManagementPage = () => {
       setDialogMessage("Xoá thành công");
       setShowDialog(true);
       setUsers(users.filter(u => u.id !== id));
-    } catch (error) {
+    } catch {
       // Handled globally
     } finally {
       setIsLoading(false);
