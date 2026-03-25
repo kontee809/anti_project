@@ -9,7 +9,7 @@ export const handleApiError = (error) => {
 
 export const getUsers = async () => {
     try {
-        const response = await api.get('/api/admin/users');
+        const response = await api.get('/admin/users');
         return response.data;
     } catch (error) {
         handleApiError(error);
@@ -18,7 +18,7 @@ export const getUsers = async () => {
 
 export const searchUsers = async (keyword) => {
     try {
-        const response = await api.get('/api/admin/users/search', { params: { keyword } });
+        const response = await api.get('/admin/users/search', { params: { keyword } });
         return response.data;
     } catch (error) {
         handleApiError(error);
@@ -27,7 +27,7 @@ export const searchUsers = async (keyword) => {
 
 export const createUser = async (data) => {
     try {
-        const response = await api.post('/api/admin/users', data);
+        const response = await api.post('/admin/users', data);
         return response.data;
     } catch (error) {
         handleApiError(error);
@@ -36,7 +36,7 @@ export const createUser = async (data) => {
 
 export const updateUser = async (id, data) => {
     try {
-        const response = await api.put(`/api/admin/users/${id}`, data);
+        const response = await api.put(`/admin/users/${id}`, data);
         return response.data;
     } catch (error) {
         handleApiError(error);
@@ -45,7 +45,7 @@ export const updateUser = async (id, data) => {
 
 export const deleteUser = async (id) => {
     try {
-        const response = await api.delete(`/api/admin/users/${id}`);
+        const response = await api.delete(`/admin/users/${id}`);
         return response.data;
     } catch (error) {
         handleApiError(error);
