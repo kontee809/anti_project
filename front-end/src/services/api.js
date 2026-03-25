@@ -33,4 +33,29 @@ api.interceptors.response.use(
   }
 );
 
+export const createRescueRequest = async (data) => {
+  const response = await api.post('/rescue', data);
+  return response.data;
+};
+
+export const getRescueRequests = async () => {
+  const response = await api.get('/rescue');
+  return response.data;
+};
+
+export const getAdminRescueRequests = async () => {
+  const response = await api.get('/admin/rescue');
+  return response.data;
+};
+
+export const getAdminRescueStats = async () => {
+  const response = await api.get('/admin/rescue/stats');
+  return response.data;
+};
+
+export const updateRescueStatus = async (id, action, payload = {}) => {
+  const response = await api.put(`/admin/rescue/${id}/${action}`, payload);
+  return response.data;
+};
+
 export default api;

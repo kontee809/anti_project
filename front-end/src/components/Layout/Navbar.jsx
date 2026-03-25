@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { NavLink, Link, useNavigate } from 'react-router-dom';
-import { Map, LifeBuoy, ShieldAlert, LayoutDashboard, UserCircle, ChevronDown, LogOut, Users } from 'lucide-react';
+import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
+import { Map, LifeBuoy, ShieldAlert, LayoutDashboard, UserCircle, ChevronDown, LogOut, Users, AlertTriangle } from 'lucide-react';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import { useAuth } from '../../context/AuthContext';
 
@@ -8,6 +8,7 @@ const Navbar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const { role, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   
   const supportRef = useRef(null);
   const manageRef = useRef(null);
@@ -40,9 +41,9 @@ const Navbar = () => {
       isActive ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
     }`;
 
-  const buttonClass = (isOpen) =>
+  const buttonClass = (isOpen, isActiveRoute) =>
     `flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
-      isOpen ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+      isOpen || isActiveRoute ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
     }`;
 
   return (
@@ -66,7 +67,7 @@ const Navbar = () => {
         <div className="relative" ref={supportRef}>
           <button 
             onClick={() => handleDropdownClick('support')}
-            className={buttonClass(activeDropdown === 'support')}
+            className={buttonClass(activeDropdown === 'support', ['/report', '/support'].includes(location.pathname))}
             data-test-id="navbar-menu-support"
           >
             <LifeBuoy size={18} />
@@ -76,12 +77,12 @@ const Navbar = () => {
           
           {activeDropdown === 'support' && (
             <div className="absolute top-[calc(100%+8px)] left-0 w-56 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden py-2 animate-in fade-in zoom-in-95 origin-top-left" data-test-id="navbar-dropdown-support">
-              <Link to="/report" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium border-b border-slate-50" data-test-id="navbar-dropdown-support-report">
-                <ShieldAlert size={16} className="text-orange-500" />
+              <Link to="/report" onClick={closeMenu} className={`flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm font-medium border-b border-slate-50 transition-colors ${location.pathname === '/report' ? 'text-blue-700 bg-blue-50/50' : 'text-slate-700'}`} data-test-id="navbar-dropdown-support-report">
+                <ShieldAlert size={16} className={location.pathname === '/report' ? 'text-blue-600' : 'text-orange-500'} />
                 Gửi thông tin ngập
               </Link>
-              <Link to="/support" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium" data-test-id="navbar-dropdown-support-request">
-                <LifeBuoy size={16} className="text-blue-500" />
+              <Link to="/support" onClick={closeMenu} className={`flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm font-medium transition-colors ${location.pathname === '/support' ? 'text-blue-700 bg-blue-50/50' : 'text-slate-700'}`} data-test-id="navbar-dropdown-support-request">
+                <LifeBuoy size={16} className={location.pathname === '/support' ? 'text-blue-600' : 'text-blue-500'} />
                 Yêu cầu trợ giúp
               </Link>
             </div>
@@ -92,7 +93,7 @@ const Navbar = () => {
           <div className="relative" ref={manageRef}>
             <button 
               onClick={() => handleDropdownClick('manage')}
-              className={buttonClass(activeDropdown === 'manage')}
+              className={buttonClass(activeDropdown === 'manage', location.pathname.startsWith('/management'))}
               data-test-id="navbar-menu-manage"
             >
               <LayoutDashboard size={18} />
@@ -101,14 +102,18 @@ const Navbar = () => {
             </button>
             
             {activeDropdown === 'manage' && (
-              <div className="absolute top-[calc(100%+8px)] left-0 w-56 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden py-2 animate-in fade-in zoom-in-95 origin-top-left" data-test-id="navbar-dropdown-manage">
-                <Link to="/management" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium border-b border-slate-50" data-test-id="navbar-dropdown-manage-dashboard">
-                  <LayoutDashboard size={16} className="text-indigo-500" />
-                  Tổng quan Dashboard
+              <div className="absolute top-[calc(100%+8px)] left-0 w-64 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden py-2 animate-in fade-in zoom-in-95 origin-top-left" data-test-id="navbar-dropdown-manage">
+                <Link to="/management" onClick={closeMenu} className={`flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm font-medium border-b border-slate-50 transition-colors ${location.pathname === '/management' ? 'text-blue-700 bg-blue-50/50' : 'text-slate-700'}`} data-test-id="navbar-dropdown-manage-dashboard">
+                  <LayoutDashboard size={16} className={location.pathname === '/management' ? 'text-blue-600' : 'text-indigo-500'} />
+                  Tổng quan
                 </Link>
-                <Link to="/management/users" onClick={closeMenu} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm text-slate-700 font-medium" data-test-id="navbar-dropdown-manage-users">
-                  <Users size={16} className="text-emerald-500" />
-                  Quản lý User
+                <Link to="/management/rescue" onClick={closeMenu} className={`flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm font-medium border-b border-slate-50 transition-colors group ${location.pathname === '/management/rescue' ? 'text-blue-700 bg-blue-50/50' : 'text-slate-700'}`} data-test-id="navbar-dropdown-manage-rescue">
+                  <AlertTriangle size={16} className={location.pathname === '/management/rescue' ? 'text-blue-600' : 'text-red-500 group-hover:scale-110 transition-transform'} />
+                  Quản lý yêu cầu cứu trợ
+                </Link>
+                <Link to="/management/users" onClick={closeMenu} className={`flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm font-medium transition-colors ${location.pathname === '/management/users' ? 'text-blue-700 bg-blue-50/50' : 'text-slate-700'}`} data-test-id="navbar-dropdown-manage-users">
+                  <Users size={16} className={location.pathname === '/management/users' ? 'text-blue-600' : 'text-emerald-500'} />
+                  Quản lý người dùng
                 </Link>
               </div>
             )}
