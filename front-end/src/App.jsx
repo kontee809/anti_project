@@ -8,6 +8,7 @@ import ManagementPage from './pages/ManagementPage';
 import UserManagementPage from './pages/UserManagementPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import RescueManagementPage from './pages/RescueManagementPage';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 
@@ -30,6 +31,7 @@ function App() {
               {/* ADMIN Only Routes */}
               <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
                 <Route path="/management" element={<ManagementPage />} />
+                <Route path="/management/rescue" element={<RescueManagementPage />} />
                 <Route path="/management/users" element={<UserManagementPage />} />
               </Route>
             </Route>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useMapStore } from '../../store/useMapStore';
-import { Layers, Droplets, CloudRain, TriangleAlert } from 'lucide-react';
+import { Layers, Droplets, CloudRain, TriangleAlert, LifeBuoy } from 'lucide-react';
 
 const LayerControl = () => {
   const { activeLayers, toggleLayer } = useMapStore();
@@ -9,6 +9,7 @@ const LayerControl = () => {
     { id: 'waterLevel', label: 'Mực nước', icon: <Droplets size={18} className="text-blue-500" /> },
     { id: 'rainfall', label: 'Lượng mưa', icon: <CloudRain size={18} className="text-indigo-500" /> },
     { id: 'warnings', label: 'Tháp báo lụt', icon: <TriangleAlert size={18} className="text-red-500" /> },
+    { id: 'rescueRequests', label: 'Yêu cầu cứu trợ', icon: <LifeBuoy size={18} className="text-red-600" /> },
   ];
 
   return (
