@@ -1,2 +1,38 @@
+# Maven
 target/
+*.jar
+*.war
 *.class
+
+# Logs
+logs/
+*.log
+
+# Env & Secret Files
+application-local.yml
+application-dev.yml
+application-prod.yml
+.env
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Temp Files
+*.tmp
+*.swp
+
+# Database Files
+*.sql
+*.db
+
+# Uploads
+/uploads/
+/images/

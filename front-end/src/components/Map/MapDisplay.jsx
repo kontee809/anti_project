@@ -6,7 +6,7 @@ import { Droplets, CloudRain, TriangleAlert, LifeBuoy } from 'lucide-react';
 import { useMapStore } from '../../store/useMapStore';
 import { waterLevelStations, rainfallStations, warningTowers } from '../../data/mockData';
 import MarkerPopup from './MarkerPopup';
-import { getRescueRequests } from '../../services/api';
+import { getRescueRequests, getPublicStations } from '../../services/api';
 
 const MapController = ({ targetCoord, zoomLevel }) => {
   const map = useMap();
@@ -37,9 +37,10 @@ const createCustomIcon = (iconElement, bgColorClass, isActive = false) => {
 
 const getWaterLevelColor = (status) => {
   switch (status) {
-    case 'critical': return 'bg-red-500';
-    case 'warning': return 'bg-orange-500';
-    case 'elevated': return 'bg-blue-500';
+    case 'DANGER': return 'bg-red-500';
+    case 'WARNING': return 'bg-orange-500';
+    case 'NORMAL': return 'bg-emerald-500';
+    case 'OFFLINE': return 'bg-slate-500';
     default: return 'bg-emerald-500';
   }
 };
@@ -50,17 +51,27 @@ const MapDisplay = () => {
   const [activeMarkerId, setActiveMarkerId] = useState(null);
   const [flyToTarget, setFlyToTarget] = useState(null);
   const [rescueRequests, setRescueRequests] = useState([]);
+  const [stations, setStations] = useState([]);
 
   useEffect(() => {
+    let intv;
     if (activeLayers.rescueRequests) {
-      getRescueRequests().then(data => setRescueRequests(data)).catch(err => console.error("Failed to fetch rescue requests", err));
+      const fetchReqs = () => getRescueRequests().then(data => setRescueRequests(data)).catch(console.error);
+      fetchReqs();
+      intv = setInterval(fetchReqs, 10000);
     }
+    return () => clearInterval(intv);
   }, [activeLayers.rescueRequests]);
 
   useEffect(() => {
-    const interval = setInterval(() => setTimestamp(Date.now()), 5000);
-    return () => clearInterval(interval);
-  }, []);
+    let intv;
+    if (activeLayers.waterLevel) {
+      const fetchStations = () => getPublicStations().then(data => setStations(data)).catch(console.error);
+      fetchStations();
+      intv = setInterval(fetchStations, 5000);
+    }
+    return () => clearInterval(intv);
+  }, [activeLayers.waterLevel]);
 
   const handleMarkerClick = (station) => {
     setActiveMarkerId(station.id);
@@ -85,23 +96,46 @@ const MapDisplay = () => {
         
         <MapController targetCoord={flyToTarget} zoomLevel={14} />
 
-        {activeLayers.waterLevel && waterLevelStations.map((station) => {
-          const simulatedValue = (station.value + Math.sin(timestamp / 1000 + Number(station.id.split('-')[1])) * 5).toFixed(1);
-          const isActive = activeMarkerId === station.id;
+        {activeLayers.waterLevel && stations.map((station) => {
+          const isActive = activeMarkerId === `station-${station.id}`;
+          let pulseClass = station.status === 'DANGER' ? 'animate-[pulse_1.5s_ease-in-out_infinite]' : '';
           
           return (
             <Marker 
-              key={station.id} 
-              position={station.coordinates}
-              icon={createCustomIcon(<Droplets size={isActive ? 20 : 16} />, getWaterLevelColor(station.status), isActive)}
-              eventHandlers={{ click: () => handleMarkerClick(station) }}
+              key={`station-${station.id}`} 
+              position={[station.latitude, station.longitude]}
+              icon={createCustomIcon(<Droplets size={isActive ? 20 : 16} />, `${getWaterLevelColor(station.status)} ${pulseClass}`, isActive)}
+              eventHandlers={{ click: () => {
+                setActiveMarkerId(`station-${station.id}`);
+                setFlyToTarget([station.latitude, station.longitude]);
+              }}}
             >
               <Popup 
                 className="custom-popup border-0 bg-transparent m-0 p-0"
                 onClose={() => setActiveMarkerId(null)}
               >
-                <div data-test-id={`map-marker-waterLevel-${station.id}`}>
-                  <MarkerPopup data={{...station, value: simulatedValue}} />
+                <div data-test-id={`map-marker-station-${station.id}`}>
+                  <div className="bg-white rounded-xl shadow-2xl border border-slate-100 p-5 w-[280px]">
+                    <div className="flex items-center gap-2 mb-3 pb-3 border-b border-blue-100">
+                      <div className={`p-1.5 text-white rounded-lg ${getWaterLevelColor(station.status)}`}>
+                        <Droplets size={18} />
+                      </div>
+                      <h3 className="font-bold text-slate-800 text-base">{station.name}</h3>
+                    </div>
+                    <div className="text-sm space-y-2 text-slate-700">
+                       <p className="flex justify-between items-center"><span className="text-slate-500 mb-0.5 block">Mức nước hiện tại:</span> <span className="font-black text-lg text-blue-600">{station.lastWaterLevel !== null ? station.lastWaterLevel.toFixed(2) + 'm' : 'N/A'}</span></p>
+                       <p className="flex justify-between items-center"><span className="text-slate-500 mb-0.5 block">Cập nhật:</span> <span className="font-semibold">{station.lastUpdated ? new Date(station.lastUpdated).toLocaleTimeString('vi-VN') : 'N/A'}</span></p>
+                       <div className="pt-2 border-t border-slate-50">
+                         <span className="text-slate-500 block mb-1">Trạng thái:</span>
+                         <div className={`p-2 rounded-lg font-bold text-center border uppercase tracking-wider ${
+                            station.status === 'NORMAL' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                            station.status === 'WARNING' ? 'bg-orange-50 text-orange-700 border-orange-200' :
+                            station.status === 'DANGER' ? 'bg-red-50 text-red-700 border-red-200' : 'bg-slate-50 text-slate-700 border-slate-200'
+                         }`}>{station.status}</div>
+                       </div>
+                       <a href={`/stations/${station.id}`} className="mt-3 block text-center w-full py-2 bg-blue-50 text-blue-600 font-bold rounded-lg hover:bg-blue-100 transition-colors">Xem lịch sử trạm</a>
+                    </div>
+                  </div>
                 </div>
               </Popup>
             </Marker>
