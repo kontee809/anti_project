@@ -31,7 +31,11 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public Map<String, String> register(RegisterRequest request) {
-        if (repository.findByEmail(request.getEmail()).isPresent()) {
+        log.info("Attempting to register new user with email: {}", request.getEmail());
+        var existingUser = repository.findByEmail(request.getEmail());
+        log.info("Result of findByEmail({}): isPresent={}", request.getEmail(), existingUser.isPresent());
+        
+        if (existingUser.isPresent()) {
             throw new IllegalArgumentException("Email already in use");
         }
 
@@ -53,6 +57,7 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        log.info("Attempting to authenticate user with email: {}", request.getEmail());
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -62,6 +67,7 @@ public class AuthenticationService {
         
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password."));
+        log.info("Authentication successful for email: {}", request.getEmail());
                 
         var jwtToken = jwtService.generateToken(user);
         

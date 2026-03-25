@@ -1,12 +1,26 @@
-import React, { useState, useMemo } from 'react';
-import { useUserStore } from '../store/useUserStore';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import UserTable from '../components/UserManagement/UserTable';
 import UserModal from '../components/UserManagement/UserModal';
 import Pagination from '../components/UserManagement/Pagination';
+import SuccessDialog from '../components/SuccessDialog';
 import { Search, Plus } from 'lucide-react';
+import { getUsers, searchUsers, createUser, updateUser, deleteUser } from '../services/userService';
+import toast from 'react-hot-toast';
 
 const UserManagementPage = () => {
-  const { users, addUser, updateUser, deleteUser } = useUserStore();
+  const navigate = useNavigate();
+  const role = localStorage.getItem('role');
+  const currentUserEmail = localStorage.getItem('email');
+
+  useEffect(() => {
+    if (role !== 'ADMIN') {
+      navigate('/');
+    }
+  }, [role, navigate]);
+
+  const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'desc' });
@@ -16,12 +30,48 @@ const UserManagementPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
 
-  const filteredAndSortedUsers = useMemo(() => {
-    let result = users.filter(user => 
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      user.email.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  const [showDialog, setShowDialog] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState('');
 
+  const fetchUsersData = async () => {
+    setIsLoading(true);
+    try {
+      const data = await getUsers();
+      setUsers(data);
+    } catch (error) {
+      // Error is handled globally by userService handleApiError
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!searchTerm) {
+      fetchUsersData();
+    }
+  }, [searchTerm]);
+
+  // Handle Search hitting Enter or debounced
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(async () => {
+      if (searchTerm) {
+        setIsLoading(true);
+        try {
+          const data = await searchUsers(searchTerm);
+          setUsers(data);
+        } catch (error) {
+          // Handled globally
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm]);
+
+  const sortedUsers = useMemo(() => {
+    let result = [...users];
     if (sortConfig.key) {
       result.sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
@@ -29,12 +79,11 @@ const UserManagementPage = () => {
         return 0;
       });
     }
-
     return result;
-  }, [users, searchTerm, sortConfig]);
+  }, [users, sortConfig]);
 
-  const totalPages = Math.ceil(filteredAndSortedUsers.length / usersPerPage);
-  const paginatedUsers = filteredAndSortedUsers.slice(
+  const totalPages = Math.ceil(sortedUsers.length / usersPerPage);
+  const paginatedUsers = sortedUsers.slice(
     (currentPage - 1) * usersPerPage, 
     currentPage * usersPerPage
   );
@@ -57,15 +106,52 @@ const UserManagementPage = () => {
     setIsModalOpen(true);
   };
 
-  const handleModalSubmit = (data) => {
-    if (editingUser) {
-      updateUser(editingUser.id, data);
-    } else {
-      addUser(data);
+  const handleModalSubmit = async (data) => {
+    const payload = {
+      ...data,
+      role: data.role.toUpperCase(),
+      status: data.status.toUpperCase()
+    };
+
+    try {
+      if (editingUser) {
+        await updateUser(editingUser.id, payload);
+        setDialogMessage("Sửa thành công");
+      } else {
+        await createUser(payload);
+        setDialogMessage("Thêm thành công");
+      }
+      setShowDialog(true);
+      setIsModalOpen(false);
+      // Refresh list
+      if (searchTerm) {
+         const searched = await searchUsers(searchTerm);
+         setUsers(searched);
+      } else {
+         fetchUsersData();
+      }
+    } catch (error) {
+      // Handled globally
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      setIsLoading(true);
+      await deleteUser(id);
+      setDialogMessage("Xoá thành công");
+      setShowDialog(true);
+      setUsers(users.filter(u => u.id !== id));
+    } catch (error) {
+      // Handled globally
+    } finally {
+      setIsLoading(false);
     }
   };
 
   React.useEffect(() => { setCurrentPage(1); }, [searchTerm]);
+
+  if (role !== 'ADMIN') return null;
 
   return (
     <div className="p-8 max-w-7xl mx-auto w-full pb-20" data-test-id="user-page">
@@ -77,7 +163,8 @@ const UserManagementPage = () => {
         </div>
         <button 
           onClick={openAddModal}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-xl shadow-lg shadow-blue-500/30 transition-all active:scale-95 whitespace-nowrap"
+          disabled={isLoading}
+          className={`flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-xl shadow-lg shadow-blue-500/30 transition-all whitespace-nowrap ${isLoading ? 'opacity-70 cursor-not-allowed' : 'active:scale-95'}`}
           data-test-id="user-button-add"
         >
           <Plus size={18} />
@@ -99,17 +186,24 @@ const UserManagementPage = () => {
             />
           </div>
           <div className="text-sm font-semibold text-slate-500 ml-4 whitespace-nowrap" data-test-id="user-text-total">
-            Tổng cộng: {filteredAndSortedUsers.length} tài khoản
+            Tổng cộng: {users.length} tài khoản
           </div>
         </div>
 
-        <UserTable 
-          users={paginatedUsers} 
-          onEdit={openEditModal}
-          onDelete={deleteUser}
-          onSort={handleSort}
-          sortConfig={sortConfig}
-        />
+        {isLoading ? (
+          <div className="flex justify-center items-center py-20 text-slate-400">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          </div>
+        ) : (
+          <UserTable 
+            users={paginatedUsers} 
+            onEdit={openEditModal}
+            onDelete={handleDelete}
+            onSort={handleSort}
+            sortConfig={sortConfig}
+            currentUserEmail={currentUserEmail}
+          />
+        )}
 
         <Pagination 
           currentPage={currentPage} 
@@ -123,6 +217,13 @@ const UserManagementPage = () => {
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleModalSubmit}
         initialData={editingUser}
+        currentUserEmail={currentUserEmail}
+      />
+
+      <SuccessDialog 
+        open={showDialog} 
+        message={dialogMessage} 
+        onClose={() => setShowDialog(false)} 
       />
     </div>
   );

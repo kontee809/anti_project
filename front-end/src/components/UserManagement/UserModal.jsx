@@ -1,28 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 
-const UserModal = ({ isOpen, onClose, onSubmit, initialData }) => {
+const UserModal = ({ isOpen, onClose, onSubmit, initialData, currentUserEmail }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    role: 'User',
-    status: 'Active'
+    password: '',
+    role: 'USER',
+    status: 'ACTIVE'
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (initialData) {
-      setFormData(initialData);
+      setFormData({
+        ...initialData,
+        password: '',
+        role: initialData.role ? initialData.role.toUpperCase() : 'USER',
+        status: initialData.status ? initialData.status.toUpperCase() : 'ACTIVE'
+      });
     } else {
-      setFormData({ name: '', email: '', role: 'User', status: 'Active' });
+      setFormData({ name: '', email: '', password: '', role: 'USER', status: 'ACTIVE' });
     }
   }, [initialData, isOpen]);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit(formData);
-    onClose();
+    setIsSubmitting(true);
+    try {
+      await onSubmit(formData);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -62,19 +73,44 @@ const UserModal = ({ isOpen, onClose, onSubmit, initialData }) => {
             />
           </div>
 
+          <div>
+            <label className="block text-sm font-semibold text-slate-600 mb-1.5">Mật khẩu {initialData ? '(Tùy chọn)' : '*'}</label>
+            <input 
+              required={!initialData}
+              type="password" 
+              value={formData.password}
+              onChange={e => setFormData({...formData, password: e.target.value})}
+              placeholder={initialData ? "Để trống nếu không đổi mật khẩu" : ""}
+              className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium text-slate-700 placeholder-slate-400"
+              data-test-id="user-modal-input-password"
+            />
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-semibold text-slate-600 mb-1.5">Vai trò *</label>
-              <select 
-                value={formData.role}
-                onChange={e => setFormData({...formData, role: e.target.value})}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-medium text-slate-700"
-                data-test-id="user-modal-select-role"
-              >
-                <option value="Admin" data-test-id="user-modal-option-admin">Admin</option>
-                <option value="Operator" data-test-id="user-modal-option-operator">Operator</option>
-                <option value="User" data-test-id="user-modal-option-user">User</option>
-              </select>
+              {(() => {
+                const isEditingCurrent = initialData && initialData.email === currentUserEmail;
+                const isEditingAnotherAdmin = initialData && initialData.role === 'ADMIN' && !isEditingCurrent;
+                const roleDisabled = isEditingCurrent || isEditingAnotherAdmin;
+                let roleTooltip = "";
+                if (isEditingCurrent) roleTooltip = "Không thể thay đổi vai trò của chính mình";
+                else if (isEditingAnotherAdmin) roleTooltip = "Không thể thay đổi vai trò quản trị viên khác";
+
+                return (
+                  <select 
+                    value={formData.role}
+                    onChange={e => setFormData({...formData, role: e.target.value})}
+                    disabled={roleDisabled}
+                    title={roleTooltip}
+                    className={`w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-medium text-slate-700 ${roleDisabled ? 'opacity-60 cursor-not-allowed' : ''}`}
+                    data-test-id="user-modal-select-role"
+                  >
+                    <option value="ADMIN" data-test-id="user-modal-option-admin">ADMIN</option>
+                    <option value="USER" data-test-id="user-modal-option-user">USER</option>
+                  </select>
+                );
+              })()}
             </div>
             <div>
               <label className="block text-sm font-semibold text-slate-600 mb-1.5">Trạng thái *</label>
@@ -84,8 +120,8 @@ const UserModal = ({ isOpen, onClose, onSubmit, initialData }) => {
                 className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-medium text-slate-700"
                 data-test-id="user-modal-select-status"
               >
-                <option value="Active" data-test-id="user-modal-option-active">Active</option>
-                <option value="Inactive" data-test-id="user-modal-option-inactive">Inactive</option>
+                <option value="ACTIVE" data-test-id="user-modal-option-active">Active</option>
+                <option value="INACTIVE" data-test-id="user-modal-option-inactive">Inactive</option>
               </select>
             </div>
           </div>
@@ -101,10 +137,11 @@ const UserModal = ({ isOpen, onClose, onSubmit, initialData }) => {
             </button>
             <button 
               type="submit" 
-              className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transition-all active:scale-95"
+              disabled={isSubmitting}
+              className={`flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transition-all ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'active:scale-95'}`}
               data-test-id="user-modal-button-submit"
             >
-              {initialData ? 'Lưu thay đổi' : 'Thêm mới'}
+              {isSubmitting ? 'Đang xử lý...' : (initialData ? 'Cập nhật' : 'Thêm mới')}
             </button>
           </div>
         </form>
