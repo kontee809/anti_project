@@ -151,4 +151,50 @@ export const resolveFloodReport = async (id) => {
   return response.data;
 };
 
+// RAINFALL STATIONS API
+export const getAdminRainfallStations = async () => {
+  const response = await api.get('/admin/rainfall-stations');
+  return response.data;
+};
+
+export const createRainfallStation = async (data) => {
+  const response = await api.post('/admin/rainfall-stations', data);
+  return response.data;
+};
+
+export const updateRainfallStation = async (id, data) => {
+  const response = await api.put(`/admin/rainfall-stations/${id}`, data);
+  return response.data;
+};
+
+export const deleteRainfallStation = async (id) => {
+  const response = await api.delete(`/admin/rainfall-stations/${id}`);
+  return response.data;
+};
+
+export const getRainfallStationHistory = async (id) => {
+  const response = await api.get(`/admin/rainfall-stations/${id}/history`);
+  return response.data;
+};
+
+export const getRainfallStats = async () => {
+  const response = await api.get('/admin/rainfall-stations/stats');
+  return response.data;
+};
+
+export const simulateRainfall = async (data) => {
+  const response = await api.post('/admin/rainfall-stations/simulate', data);
+  return response.data;
+};
+
+export const stopRainfallSimulation = async (id) => {
+  const response = await api.post(`/admin/rainfall-stations/simulate/stop/${id}`);
+  return response.data;
+};
+
+export const getPublicRainfallStations = async () => {
+  const response = await api.get('/rainfall-stations');
+  return response.data;
+};
+
 export default api;
