@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, ShieldAlert, Waves, MapPin, Users, PhoneCall, AlertCircle } from 'lucide-react';
-import { getAdminRescueStats, getStationStats } from '../services/api';
+import { Activity, ShieldAlert, Waves, MapPin, Users, PhoneCall, AlertCircle, ArrowRight } from 'lucide-react';
+import { getAdminRescueStats, getStationStats, getFloodAnalytics } from '../services/api';
+import { useNavigate } from 'react-router-dom';
 
 const StatCard = ({ title, value, subtitle, icon, color, testId }) => (
   <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow" data-test-id={testId}>
@@ -18,6 +19,7 @@ const StatCard = ({ title, value, subtitle, icon, color, testId }) => (
 );
 
 const ManagementPage = () => {
+  const navigate = useNavigate();
   const [rescueStats, setRescueStats] = useState({
     total: 0,
     pending: 0,
@@ -35,15 +37,19 @@ const ManagementPage = () => {
     offline: 0
   });
 
+  const [floodStats, setFloodStats] = useState({ total: 0, pending: 0, critical: 0 });
+
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [rStats, sStats] = await Promise.all([
+        const [rStats, sStats, fStats] = await Promise.all([
           getAdminRescueStats().catch(() => null),
-          getStationStats().catch(() => null)
+          getStationStats().catch(() => null),
+          getFloodAnalytics().catch(() => null)
         ]);
         if (rStats) setRescueStats(rStats);
         if (sStats) setStationStats(sStats);
+        if (fStats) setFloodStats(fStats);
       } catch (error) {
         console.error("Error fetching dashboard stats", error);
       }
@@ -72,9 +78,9 @@ const ManagementPage = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <StatCard 
-          title="Điểm ngập hiện tại" 
-          value="45" 
-          subtitle="Tăng 12 điểm so với hôm qua"
+          title="Báo cáo ngập" 
+          value={floodStats.total || 0} 
+          subtitle={`${floodStats.pending || 0} chờ duyệt, ${floodStats.critical || 0} nghiêm trọng`}
           icon={<Waves size={24} />}
           color="bg-blue-500"
           testId="management-card-floods"
@@ -95,6 +101,28 @@ const ManagementPage = () => {
           color="bg-emerald-500"
           testId="management-card-sensors"
         />
+      </div>
+
+      {/* Quick Navigation */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <button onClick={() => navigate('/management/floods')} className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all text-left group">
+          <div className="flex justify-between items-center">
+            <div>
+              <h3 className="font-bold text-slate-800">Quản lý Báo cáo Ngập</h3>
+              <p className="text-sm text-slate-500 mt-1">Xác minh, phân tích và xử lý dữ liệu ngập</p>
+            </div>
+            <ArrowRight size={20} className="text-slate-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
+          </div>
+        </button>
+        <button onClick={() => navigate('/management/rescue')} className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all text-left group">
+          <div className="flex justify-between items-center">
+            <div>
+              <h3 className="font-bold text-slate-800">Quản lý Yêu cầu Cứu trợ</h3>
+              <p className="text-sm text-slate-500 mt-1">Tiếp nhận và điều phối cứu trợ khẩn cấp</p>
+            </div>
+            <ArrowRight size={20} className="text-slate-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
+          </div>
+        </button>
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6" data-test-id="management-activity-section">

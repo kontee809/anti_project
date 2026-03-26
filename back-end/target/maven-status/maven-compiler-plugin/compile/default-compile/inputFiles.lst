@@ -26,6 +26,7 @@
 /home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/controller/RescueRequestController.java
 /home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/controller/IotController.java
 /home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/controller/AdminRescueController.java
+/home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/controller/AdminFloodReportController.java
 /home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/config/SecurityConfig.java
 /home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/BackendApplication.java
 /home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/dto/AuthenticationResponse.java
