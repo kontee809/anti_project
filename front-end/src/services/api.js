@@ -197,4 +197,35 @@ export const getPublicRainfallStations = async () => {
   return response.data;
 };
 
+// FLOOD ALERTS
+export const getFloodAlerts = async () => {
+  const response = await api.get('/flood-alerts');
+  return response.data;
+};
+
+export const getAdminFloodAlerts = async () => {
+  const response = await api.get('/flood-alerts/admin/all');
+  return response.data;
+};
+
+export const getFloodAlertStats = async () => {
+  const response = await api.get('/flood-alerts/admin/stats');
+  return response.data;
+};
+
+export const acknowledgeFloodAlert = async (id) => {
+  const response = await api.put(`/flood-alerts/admin/${id}/acknowledge`);
+  return response.data;
+};
+
+export const resolveFloodAlert = async (id) => {
+  const response = await api.put(`/flood-alerts/admin/${id}/resolve`);
+  return response.data;
+};
+
+export const getSystemStatus = async () => {
+  const response = await api.get('/flood-alerts/system-status');
+  return response.data;
+};
+
 export default api;

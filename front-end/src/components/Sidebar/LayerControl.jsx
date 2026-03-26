@@ -9,6 +9,7 @@ const LayerControl = () => {
     { id: 'waterLevel', label: 'Mực nước', icon: <Droplets size={18} className="text-blue-500" /> },
     { id: 'rainfall', label: 'Lượng mưa', icon: <CloudRain size={18} className="text-indigo-500" /> },
     { id: 'floodReports', label: 'Điểm ngập', icon: <Waves size={18} className="text-cyan-500" /> },
+    { id: 'floodAlerts', label: 'Cảnh báo AI', icon: <TriangleAlert size={18} className="text-rose-500" /> },
     { id: 'warnings', label: 'Tháp báo lụt', icon: <TriangleAlert size={18} className="text-red-500" /> },
     { id: 'rescueRequests', label: 'Yêu cầu cứu trợ', icon: <LifeBuoy size={18} className="text-red-600" /> },
   ];
