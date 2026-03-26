@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import vn.thuyphominh.backend.entity.FloodReport;
 import vn.thuyphominh.backend.entity.FloodReportStatus;
+import vn.thuyphominh.backend.entity.ReportSource;
+import vn.thuyphominh.backend.entity.SeverityLevel;
 
 import java.util.List;
 
@@ -13,6 +15,14 @@ public interface FloodReportRepository extends JpaRepository<FloodReport, Long> 
     List<FloodReport> findByStatusNot(FloodReportStatus status);
 
     List<FloodReport> findByStatusNotOrderByCreatedAtDesc(FloodReportStatus status);
+
+    List<FloodReport> findAllByOrderByCreatedAtDesc();
+
+    long countByStatus(FloodReportStatus status);
+
+    long countBySeverityLevel(SeverityLevel severity);
+
+    long countByReportedBy(ReportSource source);
 
     @Query(value = "SELECT *, " +
             "(6371 * ACOS(COS(RADIANS(:lat)) * COS(RADIANS(latitude)) * COS(RADIANS(longitude) - RADIANS(:lng)) + SIN(RADIANS(:lat)) * SIN(RADIANS(latitude)))) AS distance " +

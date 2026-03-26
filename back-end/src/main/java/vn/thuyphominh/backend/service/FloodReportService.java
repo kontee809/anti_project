@@ -47,7 +47,7 @@ public class FloodReportService {
     }
 
     public List<FloodReport> getAllReports() {
-        return floodReportRepository.findAll();
+        return floodReportRepository.findAllByOrderByCreatedAtDesc();
     }
 
     public List<FloodReport> getNearbyReports(double lat, double lng, double radiusKm) {
@@ -59,6 +59,48 @@ public class FloodReportService {
                 .orElseThrow(() -> new IllegalArgumentException("Flood report not found"));
         report.setStatus(FloodReportStatus.valueOf(newStatus.toUpperCase()));
         return floodReportRepository.save(report);
+    }
+
+    public FloodReport verifyReport(Long id) {
+        FloodReport report = floodReportRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Flood report not found"));
+        report.setStatus(FloodReportStatus.VERIFIED);
+        report.setReliabilityScore(Math.min(100, report.getReliabilityScore() + 15));
+        log.info("Admin verified flood report #{}", id);
+        return floodReportRepository.save(report);
+    }
+
+    public FloodReport rejectReport(Long id) {
+        FloodReport report = floodReportRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Flood report not found"));
+        report.setStatus(FloodReportStatus.RESOLVED);
+        report.setReliabilityScore(Math.max(0, report.getReliabilityScore() - 20));
+        log.info("Admin rejected flood report #{}", id);
+        return floodReportRepository.save(report);
+    }
+
+    public FloodReport resolveReport(Long id) {
+        FloodReport report = floodReportRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Flood report not found"));
+        report.setStatus(FloodReportStatus.RESOLVED);
+        log.info("Admin resolved flood report #{}", id);
+        return floodReportRepository.save(report);
+    }
+
+    public java.util.Map<String, Object> getAnalytics() {
+        java.util.Map<String, Object> stats = new java.util.HashMap<>();
+        stats.put("total", floodReportRepository.count());
+        stats.put("pending", floodReportRepository.countByStatus(FloodReportStatus.PENDING));
+        stats.put("verified", floodReportRepository.countByStatus(FloodReportStatus.VERIFIED));
+        stats.put("resolved", floodReportRepository.countByStatus(FloodReportStatus.RESOLVED));
+        stats.put("low", floodReportRepository.countBySeverityLevel(SeverityLevel.LOW));
+        stats.put("medium", floodReportRepository.countBySeverityLevel(SeverityLevel.MEDIUM));
+        stats.put("high", floodReportRepository.countBySeverityLevel(SeverityLevel.HIGH));
+        stats.put("critical", floodReportRepository.countBySeverityLevel(SeverityLevel.CRITICAL));
+        stats.put("fromUser", floodReportRepository.countByReportedBy(ReportSource.USER));
+        stats.put("fromSensor", floodReportRepository.countByReportedBy(ReportSource.SENSOR));
+        stats.put("fromSystem", floodReportRepository.countByReportedBy(ReportSource.SYSTEM));
+        return stats;
     }
 
     // ---- Intelligence Logic ----
