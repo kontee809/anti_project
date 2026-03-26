@@ -18,6 +18,7 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 
 function App() {
+  console.log("App.jsx: Rendering App component");
   return (
     <BrowserRouter>
       <AuthProvider>
@@ -25,7 +26,7 @@ function App() {
           {/* Public Routes without Navbar */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          
+
           {/* Protected Routes inside PageLayout (Navbar + Map) */}
           <Route element={<ProtectedRoute />}>
             <Route element={<PageLayout />}>
@@ -33,7 +34,7 @@ function App() {
               <Route path="/stations/:id" element={<StationDetailPage />} />
               <Route path="/report" element={<ReportFloodPage />} />
               <Route path="/support" element={<SupportRequestPage />} />
-              
+
               {/* ADMIN Only Routes */}
               <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
                 <Route path="/management" element={<ManagementPage />} />
@@ -46,7 +47,7 @@ function App() {
               </Route>
             </Route>
           </Route>
-          
+
           {/* Fallback routing */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
