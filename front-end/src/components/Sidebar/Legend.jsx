@@ -9,7 +9,7 @@ const legendItems = [
 
 const Legend = () => {
   return (
-    <div className="bg-white/90 backdrop-blur-md shadow-xl rounded-2xl p-5 border border-white/50">
+    <div className="bg-white/90 backdrop-blur-md shadow-xl rounded-2xl p-5 border border-white/50" data-test-id="map-legend">
       <h3 className="text-sm font-bold tracking-tight text-slate-800 mb-4 pb-2 border-b border-slate-200 flex items-center gap-2">
         <span>Chú thích bản đồ</span>
       </h3>

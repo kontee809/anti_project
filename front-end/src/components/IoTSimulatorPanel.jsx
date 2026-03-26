@@ -62,7 +62,7 @@ const IoTSimulatorPanel = ({ stations, onUpdate }) => {
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 mb-8 text-white shadow-xl relative overflow-hidden">
+    <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 mb-8 text-white shadow-xl relative overflow-hidden" data-test-id="iot-simulator-panel">
       {/* Decorative background element */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
       
@@ -97,6 +97,7 @@ const IoTSimulatorPanel = ({ stations, onUpdate }) => {
             className="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition"
             value={stationId}
             onChange={(e) => setStationId(e.target.value)}
+            data-test-id="iot-sim-select-station"
           >
             <option value="">Select Station...</option>
             {stations.map(s => (
@@ -111,6 +112,7 @@ const IoTSimulatorPanel = ({ stations, onUpdate }) => {
             className="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition"
             value={mode}
             onChange={(e) => setMode(e.target.value)}
+            data-test-id="iot-sim-select-mode"
           >
             <option value="AUTO">AUTO (Gradual change)</option>
             <option value="RANDOM">RANDOM (Crazy jumps)</option>
@@ -127,6 +129,7 @@ const IoTSimulatorPanel = ({ stations, onUpdate }) => {
               placeholder="e.g. 75"
               value={value}
               onChange={(e) => setValue(e.target.value)}
+              data-test-id="iot-sim-input-value"
             />
           </div>
         ) : (
@@ -138,6 +141,7 @@ const IoTSimulatorPanel = ({ stations, onUpdate }) => {
               placeholder="60"
               value={duration}
               onChange={(e) => setDuration(e.target.value)}
+              data-test-id="iot-sim-input-duration"
             />
           </div>
         )}
@@ -148,6 +152,7 @@ const IoTSimulatorPanel = ({ stations, onUpdate }) => {
               onClick={handleStart}
               disabled={simulating && mode !== 'MANUAL'}
               className="flex-1 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              data-test-id="iot-sim-btn-start"
             >
               <Play size={16} /> Start
             </button>
@@ -155,6 +160,7 @@ const IoTSimulatorPanel = ({ stations, onUpdate }) => {
               onClick={handleStop}
               className="px-4 bg-slate-700 hover:bg-red-500/80 active:scale-95 text-white rounded-xl flex items-center justify-center transition border border-slate-600 hover:border-red-500"
               title="Stop Simulation"
+              data-test-id="iot-sim-btn-stop"
             >
               <Square size={16} fill="currentColor" />
             </button>

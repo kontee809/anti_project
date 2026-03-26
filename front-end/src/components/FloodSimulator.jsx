@@ -62,7 +62,7 @@ const FloodSimulator = ({ position, onReportCreated }) => {
   if (localStorage.getItem('role') !== 'ADMIN') return null;
 
   return (
-    <div className="bg-slate-900/90 backdrop-blur-sm border border-slate-700 rounded-xl p-4 text-white shadow-xl">
+    <div className="bg-slate-900/90 backdrop-blur-sm border border-slate-700 rounded-xl p-4 text-white shadow-xl" data-test-id="flood-simulator-panel">
       <div className="flex items-center gap-2 mb-3">
         <FlaskConical size={16} className="text-cyan-400" />
         <span className="text-xs font-bold uppercase tracking-wider text-cyan-400">DEV: Flood Simulator</span>
@@ -76,11 +76,13 @@ const FloodSimulator = ({ position, onReportCreated }) => {
       <div className="flex gap-2">
         <button onClick={start} disabled={running || !position}
           className="flex-1 py-2 bg-cyan-600 hover:bg-cyan-500 active:scale-95 text-white font-bold rounded-lg flex items-center justify-center gap-1.5 text-xs transition disabled:opacity-50 disabled:cursor-not-allowed"
+          data-test-id="flood-sim-btn-start"
         >
           <Play size={14} /> Start
         </button>
         <button onClick={stop}
           className="px-4 py-2 bg-slate-700 hover:bg-red-500/80 active:scale-95 text-white rounded-lg flex items-center justify-center transition border border-slate-600 hover:border-red-500"
+          data-test-id="flood-sim-btn-stop"
         >
           <Square size={14} fill="currentColor" />
         </button>

@@ -93,13 +93,13 @@ const RainfallManagementPage = () => {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto w-full space-y-6">
+    <div className="p-8 max-w-7xl mx-auto w-full space-y-6" data-test-id="rainfall-mgmt-page">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-slate-800">Quản lý Trạm Đo Mưa</h1>
           <p className="text-slate-500 mt-1 font-medium">Giám sát dữ liệu lượng mưa thời gian thực</p>
         </div>
-        <button onClick={() => handleOpenModal()} className="px-4 py-2.5 bg-indigo-600 text-white rounded-xl font-bold flex items-center gap-2 hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/20">
+        <button onClick={() => handleOpenModal()} className="px-4 py-2.5 bg-indigo-600 text-white rounded-xl font-bold flex items-center gap-2 hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/20" data-test-id="rainfall-btn-add">
           <Plus size={18} /> Thêm trạm mới
         </button>
       </div>
@@ -109,9 +109,11 @@ const RainfallManagementPage = () => {
         <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}
           placeholder="Tìm theo tên, địa chỉ..."
           className="flex-1 min-w-[200px] px-4 py-2.5 rounded-xl bg-white border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-medium"
+          data-test-id="rainfall-input-search"
         />
         <select value={filterIntensity} onChange={(e) => setFilterIntensity(e.target.value)}
           className="py-2.5 px-3 rounded-xl bg-white border border-slate-200 text-sm font-medium outline-none"
+          data-test-id="rainfall-select-intensity"
         >
           <option value="">Tất cả cường độ</option>
           <option value="LIGHT">Nhẹ</option>
@@ -121,6 +123,7 @@ const RainfallManagementPage = () => {
         </select>
         <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}
           className="py-2.5 px-3 rounded-xl bg-white border border-slate-200 text-sm font-medium outline-none"
+          data-test-id="rainfall-select-status"
         >
           <option value="">Tất cả trạng thái</option>
           <option value="ACTIVE">Hoạt động</option>
@@ -132,7 +135,7 @@ const RainfallManagementPage = () => {
       {/* Table */}
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left">
+          <table className="w-full text-left" data-test-id="rainfall-table">
             <thead className="bg-slate-50 border-b border-slate-200">
               <tr>
                 <th className="p-4 font-semibold text-slate-600 text-xs uppercase">Mã</th>
@@ -154,7 +157,7 @@ const RainfallManagementPage = () => {
                 const int = INTENSITY_CONFIG[s.intensity] || INTENSITY_CONFIG.LIGHT;
                 const stat = STATUS_CONFIG[s.status] || STATUS_CONFIG.INACTIVE;
                 return (
-                  <tr key={s.id} className={`border-b border-slate-50 hover:bg-slate-50 transition ${s.intensity === 'EXTREME' ? 'bg-red-50/30' : ''}`}>
+                  <tr key={s.id} className={`border-b border-slate-50 hover:bg-slate-50 transition ${s.intensity === 'EXTREME' ? 'bg-red-50/30' : ''}`} data-test-id={`rainfall-row-${s.id}`}>
                     <td className="p-4 font-bold text-slate-700 text-sm">RF-{s.id}</td>
                     <td className="p-4">
                       <div className="font-bold text-slate-800 text-sm">{s.name}</div>
@@ -180,14 +183,14 @@ const RainfallManagementPage = () => {
                       <div className="flex gap-1.5 justify-end">
                         {!simRunning[s.id] ? (
                           <>
-                            <button onClick={() => handleSimulate(s.id, 'STORM')} className="p-1.5 text-cyan-500 hover:bg-cyan-50 rounded-lg transition" title="Simulate Storm"><Play size={16} /></button>
-                            <button onClick={() => handleSimulate(s.id, 'RANDOM')} className="p-1.5 text-indigo-400 hover:bg-indigo-50 rounded-lg transition" title="Simulate Random"><Zap size={16} /></button>
+                            <button onClick={() => handleSimulate(s.id, 'STORM')} className="p-1.5 text-cyan-500 hover:bg-cyan-50 rounded-lg transition" title="Simulate Storm" data-test-id={`rainfall-btn-sim-storm-${s.id}`}><Play size={16} /></button>
+                            <button onClick={() => handleSimulate(s.id, 'RANDOM')} className="p-1.5 text-indigo-400 hover:bg-indigo-50 rounded-lg transition" title="Simulate Random" data-test-id={`rainfall-btn-sim-random-${s.id}`}><Zap size={16} /></button>
                           </>
                         ) : (
-                          <button onClick={() => handleStopSim(s.id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition animate-pulse" title="Stop"><Square size={16} fill="currentColor" /></button>
+                          <button onClick={() => handleStopSim(s.id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition animate-pulse" title="Stop" data-test-id={`rainfall-btn-sim-stop-${s.id}`}><Square size={16} fill="currentColor" /></button>
                         )}
-                        <button onClick={() => handleOpenModal(s)} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition" title="Sửa"><Edit size={16} /></button>
-                        <button onClick={() => handleDelete(s.id)} className="p-1.5 text-red-400 hover:bg-red-50 rounded-lg transition" title="Xóa"><Trash2 size={16} /></button>
+                        <button onClick={() => handleOpenModal(s)} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition" title="Sửa" data-test-id={`rainfall-btn-edit-${s.id}`}><Edit size={16} /></button>
+                        <button onClick={() => handleDelete(s.id)} className="p-1.5 text-red-400 hover:bg-red-50 rounded-lg transition" title="Xóa" data-test-id={`rainfall-btn-delete-${s.id}`}><Trash2 size={16} /></button>
                       </div>
                     </td>
                   </tr>
@@ -201,17 +204,17 @@ const RainfallManagementPage = () => {
       {/* CRUD Modal */}
       {showModal && (
         <div className="fixed inset-0 z-[3000] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl" data-test-id="rainfall-modal">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-bold text-slate-800">{formData.id ? 'Sửa trạm đo mưa' : 'Thêm trạm đo mưa'}</h2>
-              <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600"><X size={20} /></button>
+              <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600" data-test-id="rainfall-modal-btn-close"><X size={20} /></button>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div><label className="text-sm font-semibold text-slate-700">Tên trạm</label><input required className="w-full mt-1 p-3 border rounded-xl font-medium outline-none focus:ring-2 focus:ring-indigo-500" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} /></div>
-              <div><label className="text-sm font-semibold text-slate-700">Địa chỉ</label><input className="w-full mt-1 p-3 border rounded-xl font-medium outline-none focus:ring-2 focus:ring-indigo-500" value={formData.address || ''} onChange={e => setFormData({ ...formData, address: e.target.value })} /></div>
+            <form onSubmit={handleSubmit} className="space-y-4" data-test-id="form-rainfall">
+              <div><label className="text-sm font-semibold text-slate-700">Tên trạm</label><input required className="w-full mt-1 p-3 border rounded-xl font-medium outline-none focus:ring-2 focus:ring-indigo-500" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} data-test-id="form-rainfall-input-name" /></div>
+              <div><label className="text-sm font-semibold text-slate-700">Địa chỉ</label><input className="w-full mt-1 p-3 border rounded-xl font-medium outline-none focus:ring-2 focus:ring-indigo-500" value={formData.address || ''} onChange={e => setFormData({ ...formData, address: e.target.value })} data-test-id="form-rainfall-input-address" /></div>
               <div className="grid grid-cols-2 gap-4">
-                <div><label className="text-sm font-semibold text-slate-700">Vĩ độ</label><input type="number" step="any" required className="w-full mt-1 p-3 border rounded-xl font-medium outline-none focus:ring-2 focus:ring-indigo-500" value={formData.latitude} onChange={e => setFormData({ ...formData, latitude: e.target.value })} /></div>
-                <div><label className="text-sm font-semibold text-slate-700">Kinh độ</label><input type="number" step="any" required className="w-full mt-1 p-3 border rounded-xl font-medium outline-none focus:ring-2 focus:ring-indigo-500" value={formData.longitude} onChange={e => setFormData({ ...formData, longitude: e.target.value })} /></div>
+                <div><label className="text-sm font-semibold text-slate-700">Vĩ độ</label><input type="number" step="any" required className="w-full mt-1 p-3 border rounded-xl font-medium outline-none focus:ring-2 focus:ring-indigo-500" value={formData.latitude} onChange={e => setFormData({ ...formData, latitude: e.target.value })} data-test-id="form-rainfall-input-lat" /></div>
+                <div><label className="text-sm font-semibold text-slate-700">Kinh độ</label><input type="number" step="any" required className="w-full mt-1 p-3 border rounded-xl font-medium outline-none focus:ring-2 focus:ring-indigo-500" value={formData.longitude} onChange={e => setFormData({ ...formData, longitude: e.target.value })} data-test-id="form-rainfall-input-lng" /></div>
               </div>
               <div className="grid grid-cols-3 gap-3">
                 <div><label className="text-xs font-bold text-yellow-600">Cảnh báo (mm/h)</label><input type="number" step="any" required className="w-full mt-1 p-2.5 border border-yellow-200 bg-yellow-50 rounded-xl font-bold text-yellow-700 outline-none text-sm" value={formData.thresholdWarning} onChange={e => setFormData({ ...formData, thresholdWarning: e.target.value })} /></div>
@@ -219,8 +222,8 @@ const RainfallManagementPage = () => {
                 <div><label className="text-xs font-bold text-red-600">Cực đoan</label><input type="number" step="any" required className="w-full mt-1 p-2.5 border border-red-200 bg-red-50 rounded-xl font-bold text-red-700 outline-none text-sm" value={formData.thresholdExtreme} onChange={e => setFormData({ ...formData, thresholdExtreme: e.target.value })} /></div>
               </div>
               <div className="pt-3 flex justify-end gap-3">
-                <button type="button" onClick={() => setShowModal(false)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 font-bold rounded-xl transition">Hủy</button>
-                <button type="submit" className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition shadow-md shadow-indigo-500/20">Lưu lại</button>
+                <button type="button" onClick={() => setShowModal(false)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 font-bold rounded-xl transition" data-test-id="form-rainfall-btn-cancel">Hủy</button>
+                <button type="submit" className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition shadow-md shadow-indigo-500/20" data-test-id="form-rainfall-submit">Lưu lại</button>
               </div>
             </form>
           </div>
