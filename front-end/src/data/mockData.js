@@ -32,13 +32,13 @@ export const rainfallStations = Array.from({ length: 60 }).map((_, i) => ({
   timestamp: new Date().toISOString(),
 }));
 
-// Generate Flood Warning Towers
-// export const warningTowers = Array.from({ length: 15 }).map((_, i) => ({
-//   id: `wt-${i}`,
-//   name: `Tháp Báo Lụt số ${i + 1}`,
-//   type: 'warning',
-//   coordinates: [randomOffset(14.0, 7), randomOffset(106.8, 2)],
-//   active: Math.random() > 0.6, // 40% chance of being active
-//   message: 'Cảnh báo ngập sâu khu vực hạ lưu.',
-//   timestamp: new Date().toISOString(),
-// }));
+//Generate Flood Warning Towers
+export const warningTowers = Array.from({ length: 15 }).map((_, i) => ({
+  id: `wt-${i}`,
+  name: `Tháp Báo Lụt số ${i + 1}`,
+  type: 'warning',
+  coordinates: [randomOffset(14.0, 7), randomOffset(106.8, 2)],
+  active: Math.random() > 0.6, // 40% chance of being active
+  message: 'Cảnh báo ngập sâu khu vực hạ lưu.',
+  timestamp: new Date().toISOString(),
+}));

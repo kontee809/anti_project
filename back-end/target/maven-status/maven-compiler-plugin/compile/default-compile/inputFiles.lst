@@ -48,7 +48,6 @@
 /home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/dto/SimulationRequest.java
 /home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/dto/StationStatsResponse.java
 /home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/service/RainfallStationService.java
-/home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/config/WebConfig.java
 /home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/service/FloodPredictionService.java
 /home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/controller/PublicRainfallStationController.java
 /home/anhuynh/An_workspace/anti_ws/anti_project/back-end/src/main/java/vn/thuyphominh/backend/entity/Status.java

@@ -23,7 +23,8 @@ public class FloodReportController {
     @PostMapping
     public ResponseEntity<FloodReport> createReport(@RequestBody FloodReportRequest request, Authentication authentication) {
         Long userId = null;
-        if (authentication != null && authentication.getPrincipal() instanceof User user) {
+        if (authentication != null && authentication.getPrincipal() instanceof User) {
+            User user = (User) authentication.getPrincipal();
             userId = user.getId();
         }
         FloodReport report = floodReportService.createReport(request, userId);
