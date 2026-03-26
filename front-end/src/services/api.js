@@ -125,4 +125,30 @@ export const updateFloodReportStatus = async (id, status) => {
   return response.data;
 };
 
+// ADMIN FLOOD REPORTS
+export const getAdminFloodReports = async () => {
+  const response = await api.get('/admin/flood-reports');
+  return response.data;
+};
+
+export const getFloodAnalytics = async () => {
+  const response = await api.get('/admin/flood-reports/analytics');
+  return response.data;
+};
+
+export const verifyFloodReport = async (id) => {
+  const response = await api.put(`/admin/flood-reports/${id}/verify`);
+  return response.data;
+};
+
+export const rejectFloodReport = async (id) => {
+  const response = await api.put(`/admin/flood-reports/${id}/reject`);
+  return response.data;
+};
+
+export const resolveFloodReport = async (id) => {
+  const response = await api.put(`/admin/flood-reports/${id}/resolve`);
+  return response.data;
+};
+
 export default api;
