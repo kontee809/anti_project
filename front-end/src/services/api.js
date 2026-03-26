@@ -93,4 +93,15 @@ export const getStationStats = async () => {
   return response.data;
 };
 
+// DEV / TEST API
+export const simulateWaterStation = async (data) => {
+  const response = await api.post('/dev/water/simulate', data);
+  return response.data;
+};
+
+export const stopSimulation = async (stationId) => {
+  const response = await api.post(`/dev/water/stop/${stationId}`);
+  return response.data;
+};
+
 export default api;
