@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
-import { Map, LifeBuoy, ShieldAlert, LayoutDashboard, UserCircle, ChevronDown, LogOut, Users, AlertTriangle, Activity } from 'lucide-react';
+import { Map, LifeBuoy, ShieldAlert, LayoutDashboard, UserCircle, ChevronDown, LogOut, Users, AlertTriangle, Activity, Waves, CloudRain } from 'lucide-react';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import { useAuth } from '../../context/AuthContext';
 
@@ -9,7 +9,7 @@ const Navbar = () => {
   const { role, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const supportRef = useRef(null);
   const manageRef = useRef(null);
   const accountRef = useRef(null);
@@ -37,13 +37,11 @@ const Navbar = () => {
   };
 
   const navLinkClass = ({ isActive }) =>
-    `flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-      isActive ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+    `flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${isActive ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
     }`;
 
   const buttonClass = (isOpen, isActiveRoute) =>
-    `flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
-      isOpen || isActiveRoute ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+    `flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${isOpen || isActiveRoute ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
     }`;
 
   return (
@@ -53,7 +51,7 @@ const Navbar = () => {
           <Map size={24} />
         </div>
         <div>
-          <h1 className="text-lg font-bold text-slate-800 leading-tight">Thủy Phổ Minh</h1>
+          <h1 className="text-lg font-bold text-slate-800 leading-tight">AnTi Flood</h1>
           <p className="text-[10px] text-slate-500 uppercase font-semibold tracking-wider">Hệ thống giám sát</p>
         </div>
       </Link>
@@ -65,7 +63,7 @@ const Navbar = () => {
         </NavLink>
 
         <div className="relative" ref={supportRef}>
-          <button 
+          <button
             onClick={() => handleDropdownClick('support')}
             className={buttonClass(activeDropdown === 'support', ['/report', '/support'].includes(location.pathname))}
             data-test-id="navbar-menu-support"
@@ -74,7 +72,7 @@ const Navbar = () => {
             <span>Trợ giúp</span>
             <ChevronDown size={14} className={`transition-transform duration-200 ${activeDropdown === 'support' ? 'rotate-180' : ''}`} />
           </button>
-          
+
           {activeDropdown === 'support' && (
             <div className="absolute top-[calc(100%+8px)] left-0 w-56 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden py-2 animate-in fade-in zoom-in-95 origin-top-left" data-test-id="navbar-dropdown-support">
               <Link to="/report" onClick={closeMenu} className={`flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm font-medium border-b border-slate-50 transition-colors ${location.pathname === '/report' ? 'text-blue-700 bg-blue-50/50' : 'text-slate-700'}`} data-test-id="navbar-dropdown-support-report">
@@ -91,7 +89,7 @@ const Navbar = () => {
 
         {role === 'ADMIN' && (
           <div className="relative" ref={manageRef}>
-            <button 
+            <button
               onClick={() => handleDropdownClick('manage')}
               className={buttonClass(activeDropdown === 'manage', location.pathname.startsWith('/management'))}
               data-test-id="navbar-menu-manage"
@@ -100,7 +98,7 @@ const Navbar = () => {
               <span>Quản lý</span>
               <ChevronDown size={14} className={`transition-transform duration-200 ${activeDropdown === 'manage' ? 'rotate-180' : ''}`} />
             </button>
-            
+
             {activeDropdown === 'manage' && (
               <div className="absolute top-[calc(100%+8px)] left-0 w-64 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden py-2 animate-in fade-in zoom-in-95 origin-top-left" data-test-id="navbar-dropdown-manage">
                 <Link to="/management" onClick={closeMenu} className={`flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm font-medium border-b border-slate-50 transition-colors ${location.pathname === '/management' ? 'text-blue-700 bg-blue-50/50' : 'text-slate-700'}`} data-test-id="navbar-dropdown-manage-dashboard">
@@ -113,7 +111,15 @@ const Navbar = () => {
                 </Link>
                 <Link to="/management/stations" onClick={closeMenu} className={`flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm font-medium border-b border-slate-50 transition-colors group ${location.pathname === '/management/stations' ? 'text-blue-700 bg-blue-50/50' : 'text-slate-700'}`} data-test-id="navbar-dropdown-manage-stations">
                   <Activity size={16} className={location.pathname === '/management/stations' ? 'text-blue-600' : 'text-orange-500 group-hover:scale-110 transition-transform'} />
-                  Quản lý trạm cảm biến
+                  Quản lý trạm mực nước
+                </Link>
+                <Link to="/management/rainfall" onClick={closeMenu} className={`flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm font-medium border-b border-slate-50 transition-colors group ${location.pathname === '/management/rainfall' ? 'text-blue-700 bg-blue-50/50' : 'text-slate-700'}`} data-test-id="navbar-dropdown-manage-rainfall">
+                  <CloudRain size={16} className={location.pathname === '/management/rainfall' ? 'text-blue-600' : 'text-cyan-500 group-hover:scale-110 transition-transform'} />
+                  Quản lý trạm đo mưa
+                </Link>
+                <Link to="/management/floods" onClick={closeMenu} className={`flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm font-medium border-b border-slate-50 transition-colors group ${location.pathname === '/management/floods' ? 'text-blue-700 bg-blue-50/50' : 'text-slate-700'}`} data-test-id="navbar-dropdown-manage-floods">
+                  <Waves size={16} className={location.pathname === '/management/floods' ? 'text-blue-600' : 'text-blue-500 group-hover:scale-110 transition-transform'} />
+                  Quản lý báo cáo ngập
                 </Link>
                 <Link to="/management/users" onClick={closeMenu} className={`flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm font-medium transition-colors ${location.pathname === '/management/users' ? 'text-blue-700 bg-blue-50/50' : 'text-slate-700'}`} data-test-id="navbar-dropdown-manage-users">
                   <Users size={16} className={location.pathname === '/management/users' ? 'text-blue-600' : 'text-emerald-500'} />
@@ -126,11 +132,10 @@ const Navbar = () => {
       </div>
 
       <div className="relative" ref={accountRef}>
-        <button 
+        <button
           onClick={() => handleDropdownClick('account')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all border shadow-sm ${
-            activeDropdown === 'account' ? 'bg-slate-50 text-slate-800 border-slate-300' : 'text-slate-600 hover:bg-slate-50 border-slate-200'
-          }`}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all border shadow-sm ${activeDropdown === 'account' ? 'bg-slate-50 text-slate-800 border-slate-300' : 'text-slate-600 hover:bg-slate-50 border-slate-200'
+            }`}
           data-test-id="navbar-menu-account"
         >
           <UserCircle size={20} className="text-blue-600" />

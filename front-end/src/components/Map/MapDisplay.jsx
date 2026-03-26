@@ -4,9 +4,9 @@ import L from 'leaflet';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Droplets, CloudRain, TriangleAlert, LifeBuoy, Waves } from 'lucide-react';
 import { useMapStore } from '../../store/useMapStore';
-import { rainfallStations, warningTowers } from '../../data/mockData';
+import { warningTowers } from '../../data/mockData';
 import MarkerPopup from './MarkerPopup';
-import { getRescueRequests, getPublicStations, getFloodReports } from '../../services/api';
+import { getRescueRequests, getPublicStations, getFloodReports, getPublicRainfallStations } from '../../services/api';
 
 const MapController = ({ targetCoord, zoomLevel }) => {
   const map = useMap();
@@ -45,6 +45,15 @@ const getWaterLevelColor = (status) => {
   }
 };
 
+const getRainfallColor = (intensity) => {
+  switch (intensity) {
+    case 'EXTREME': return 'bg-red-600';
+    case 'HEAVY': return 'bg-orange-500';
+    case 'MODERATE': return 'bg-yellow-500';
+    default: return 'bg-cyan-500';
+  }
+};
+
 const MapDisplay = () => {
   const { activeLayers, mapCenter, mapZoom } = useMapStore();
   const [activeMarkerId, setActiveMarkerId] = useState(null);
@@ -52,6 +61,7 @@ const MapDisplay = () => {
   const [rescueRequests, setRescueRequests] = useState([]);
   const [stations, setStations] = useState([]);
   const [floodReports, setFloodReports] = useState([]);
+  const [rainfallStations, setRainfallStations] = useState([]);
 
   useEffect(() => {
     let intv;
@@ -82,6 +92,16 @@ const MapDisplay = () => {
     }
     return () => clearInterval(intv);
   }, [activeLayers.floodReports]);
+
+  useEffect(() => {
+    let intv;
+    if (activeLayers.rainfall) {
+      const fetchRainfall = () => getPublicRainfallStations().then(data => setRainfallStations(data)).catch(console.error);
+      fetchRainfall();
+      intv = setInterval(fetchRainfall, 5000);
+    }
+    return () => clearInterval(intv);
+  }, [activeLayers.rainfall]);
 
   const handleMarkerClick = (station) => {
     setActiveMarkerId(station.id);
@@ -133,7 +153,7 @@ const MapDisplay = () => {
                       <h3 className="font-bold text-slate-800 text-base">{station.name}</h3>
                     </div>
                     <div className="text-sm space-y-2 text-slate-700">
-                       <p className="flex justify-between items-center"><span className="text-slate-500 mb-0.5 block">Mức nước hiện tại:</span> <span className="font-black text-lg text-blue-600">{station.lastWaterLevel !== null ? station.lastWaterLevel.toFixed(2) + 'm' : 'N/A'}</span></p>
+                       <p className="flex justify-between items-center"><span className="text-slate-500 mb-0.5 block">Mực nước hiện tại:</span> <span className="font-black text-lg text-blue-600">{station.lastWaterLevel !== null ? station.lastWaterLevel.toFixed(2) + 'm' : 'N/A'}</span></p>
                        <p className="flex justify-between items-center"><span className="text-slate-500 mb-0.5 block">Cập nhật:</span> <span className="font-semibold">{station.lastUpdated ? new Date(station.lastUpdated).toLocaleTimeString('vi-VN') : 'N/A'}</span></p>
                        <div className="pt-2 border-t border-slate-50">
                          <span className="text-slate-500 block mb-1">Trạng thái:</span>
@@ -152,22 +172,41 @@ const MapDisplay = () => {
           );
         })}
 
-        {activeLayers.rainfall && rainfallStations.map((station) => {
-          const isActive = activeMarkerId === station.id;
-          
+        {activeLayers.rainfall && rainfallStations.map((rs) => {
+          const isActive = activeMarkerId === `rainfall-${rs.id}`;
+          const color = getRainfallColor(rs.intensity);
+          const pulse = rs.intensity === 'EXTREME' ? 'animate-[pulse_1.5s_ease-in-out_infinite]' : '';
+          const intLabel = rs.intensity === 'EXTREME' ? 'Cực đoan' : rs.intensity === 'HEAVY' ? 'Nặng' : rs.intensity === 'MODERATE' ? 'Vừa' : 'Nhẹ';
+
           return (
-            <Marker 
-              key={station.id} 
-              position={station.coordinates}
-              icon={createCustomIcon(<CloudRain size={isActive ? 20 : 16} />, 'bg-indigo-500', isActive)}
-              eventHandlers={{ click: () => handleMarkerClick(station) }}
+            <Marker
+              key={`rainfall-${rs.id}`}
+              position={[rs.latitude, rs.longitude]}
+              icon={createCustomIcon(<CloudRain size={isActive ? 20 : 16} />, `${color} ${pulse}`, isActive)}
+              eventHandlers={{ click: () => {
+                setActiveMarkerId(`rainfall-${rs.id}`);
+                setFlyToTarget([rs.latitude, rs.longitude]);
+              }}}
             >
-              <Popup 
-                className="custom-popup border-0 bg-transparent m-0 p-0"
-                onClose={() => setActiveMarkerId(null)}
-              >
-                <div data-test-id={`map-marker-rainfall-${station.id}`}>
-                  <MarkerPopup data={station} />
+              <Popup className="custom-popup border-0 bg-transparent m-0 p-0" onClose={() => setActiveMarkerId(null)}>
+                <div className="bg-white rounded-xl shadow-2xl border border-slate-100 p-5 w-[280px]">
+                  <div className="flex items-center gap-2 mb-3 pb-3 border-b border-indigo-100">
+                    <div className={`p-1.5 text-white rounded-lg ${color}`}><CloudRain size={18} /></div>
+                    <div>
+                      <h3 className="font-bold text-slate-800 text-base">{rs.name}</h3>
+                      <span className={`text-[10px] font-bold uppercase ${color.replace('bg-','text-')}`}>{intLabel}</span>
+                    </div>
+                  </div>
+                  <div className="text-sm space-y-2 text-slate-700">
+                    <p className="flex justify-between"><span className="text-slate-500">Hiện tại:</span><span className="font-black text-lg text-indigo-600">{rs.rainfallCurrent?.toFixed(1)} mm/h</span></p>
+                    <p className="flex justify-between"><span className="text-slate-500">1 giờ:</span><span className="font-semibold">{rs.rainfall1h?.toFixed(1)} mm</span></p>
+                    <p className="flex justify-between"><span className="text-slate-500">24 giờ:</span><span className="font-semibold">{rs.rainfall24h?.toFixed(1)} mm</span></p>
+                    <div className="flex justify-between pt-1">
+                      <span className="text-slate-500 text-xs">Pin: {rs.batteryLevel}%</span>
+                      <span className="text-slate-500 text-xs">Tín hiệu: {rs.signalStrength}%</span>
+                    </div>
+                    <p className="flex justify-between"><span className="text-slate-500">Cập nhật:</span><span className="font-semibold">{rs.lastUpdated ? new Date(rs.lastUpdated).toLocaleTimeString('vi-VN') : 'N/A'}</span></p>
+                  </div>
                 </div>
               </Popup>
             </Marker>
