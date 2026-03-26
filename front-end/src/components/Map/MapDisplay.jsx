@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, ZoomControl, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, ZoomControl, Circle, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Droplets, CloudRain, TriangleAlert, LifeBuoy, Waves } from 'lucide-react';
 import { useMapStore } from '../../store/useMapStore';
 import { warningTowers } from '../../data/mockData';
 import MarkerPopup from './MarkerPopup';
-import { getRescueRequests, getPublicStations, getFloodReports, getPublicRainfallStations } from '../../services/api';
+import { getRescueRequests, getPublicStations, getFloodReports, getPublicRainfallStations, getFloodAlerts } from '../../services/api';
 
 const MapController = ({ targetCoord, zoomLevel }) => {
   const map = useMap();
@@ -62,6 +62,7 @@ const MapDisplay = () => {
   const [stations, setStations] = useState([]);
   const [floodReports, setFloodReports] = useState([]);
   const [rainfallStations, setRainfallStations] = useState([]);
+  const [floodAlerts, setFloodAlerts] = useState([]);
 
   useEffect(() => {
     let intv;
@@ -102,6 +103,16 @@ const MapDisplay = () => {
     }
     return () => clearInterval(intv);
   }, [activeLayers.rainfall]);
+
+  useEffect(() => {
+    let intv;
+    if (activeLayers.floodAlerts) {
+      const fetchAlerts = () => getFloodAlerts().then(data => setFloodAlerts(data)).catch(console.error);
+      fetchAlerts();
+      intv = setInterval(fetchAlerts, 6000);
+    }
+    return () => clearInterval(intv);
+  }, [activeLayers.floodAlerts]);
 
   const handleMarkerClick = (station) => {
     setActiveMarkerId(station.id);
@@ -339,6 +350,47 @@ const MapDisplay = () => {
                 </div>
               </Popup>
             </Marker>
+          );
+        })}
+
+        {activeLayers.floodAlerts && floodAlerts.map((alert) => {
+          const riskColors = {
+            CRITICAL: { fill: '#ef4444', stroke: '#dc2626', opacity: 0.25 },
+            HIGH:     { fill: '#f97316', stroke: '#ea580c', opacity: 0.2 },
+            MEDIUM:   { fill: '#eab308', stroke: '#ca8a04', opacity: 0.15 },
+            LOW:      { fill: '#3b82f6', stroke: '#2563eb', opacity: 0.1 },
+          };
+          const c = riskColors[alert.riskLevel] || riskColors.LOW;
+          const riskLabel = alert.riskLevel === 'CRITICAL' ? 'NGHIÊM TRỌNG' : alert.riskLevel === 'HIGH' ? 'CAO' : alert.riskLevel === 'MEDIUM' ? 'TRUNG BÌNH' : 'THẤP';
+
+          return (
+            <Circle
+              key={`alert-${alert.id}`}
+              center={[alert.latitude, alert.longitude]}
+              radius={(alert.affectedRadiusKm || 1) * 1000}
+              pathOptions={{ color: c.stroke, fillColor: c.fill, fillOpacity: c.opacity, weight: 2 }}
+            >
+              <Popup className="custom-popup border-0 bg-transparent m-0 p-0" onClose={() => setActiveMarkerId(null)}>
+                <div className="bg-white rounded-xl shadow-2xl border border-slate-100 p-5 w-[280px]">
+                  <div className="flex items-center gap-2 mb-3 pb-3 border-b border-red-100">
+                    <div className="p-1.5 bg-red-100 text-red-600 rounded-lg"><TriangleAlert size={18} /></div>
+                    <div>
+                      <h3 className="font-bold text-slate-800 text-base">Cảnh báo AI #{alert.id}</h3>
+                      <span className="text-[10px] font-bold uppercase" style={{color: c.stroke}}>{riskLabel}</span>
+                    </div>
+                  </div>
+                  <div className="text-sm space-y-2 text-slate-700">
+                    <p className="flex justify-between"><span className="text-slate-500">Dự đoán:</span><span className="font-black text-lg text-red-600">{alert.predictedFloodLevelCm} cm</span></p>
+                    <p className="flex justify-between"><span className="text-slate-500">Độ tin cậy:</span><span className="font-bold">{alert.confidenceScore}%</span></p>
+                    <p className="flex justify-between"><span className="text-slate-500">Bán kính:</span><span className="font-semibold">{alert.affectedRadiusKm} km</span></p>
+                    <p className="flex justify-between"><span className="text-slate-500">Mực nước:</span><span className="font-semibold">{alert.inputWaterLevelM?.toFixed(2)}m</span></p>
+                    <p className="flex justify-between"><span className="text-slate-500">Lượng mưa:</span><span className="font-semibold">{alert.inputRainfallMm?.toFixed(1)} mm/h</span></p>
+                    {alert.triggerReason && <p className="bg-amber-50 p-2 rounded-lg text-amber-700 border border-amber-100 text-xs font-medium">{alert.triggerReason}</p>}
+                    <p className="text-xs text-slate-400">Dự kiến: {alert.predictedTime ? new Date(alert.predictedTime).toLocaleString('vi-VN') : 'N/A'}</p>
+                  </div>
+                </div>
+              </Popup>
+            </Circle>
           );
         })}
       </MapContainer>

@@ -121,6 +121,10 @@ const Navbar = () => {
                   <Waves size={16} className={location.pathname === '/management/floods' ? 'text-blue-600' : 'text-blue-500 group-hover:scale-110 transition-transform'} />
                   Quản lý báo cáo ngập
                 </Link>
+                <Link to="/management/alerts" onClick={closeMenu} className={`flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm font-medium border-b border-slate-50 transition-colors group ${location.pathname === '/management/alerts' ? 'text-blue-700 bg-blue-50/50' : 'text-slate-700'}`} data-test-id="navbar-dropdown-manage-alerts">
+                  <AlertTriangle size={16} className={location.pathname === '/management/alerts' ? 'text-blue-600' : 'text-rose-500 group-hover:scale-110 transition-transform'} />
+                  Cảnh báo ngập AI
+                </Link>
                 <Link to="/management/users" onClick={closeMenu} className={`flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-sm font-medium transition-colors ${location.pathname === '/management/users' ? 'text-blue-700 bg-blue-50/50' : 'text-slate-700'}`} data-test-id="navbar-dropdown-manage-users">
                   <Users size={16} className={location.pathname === '/management/users' ? 'text-blue-600' : 'text-emerald-500'} />
                   Quản lý người dùng

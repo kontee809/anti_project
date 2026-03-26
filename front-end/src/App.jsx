@@ -12,6 +12,7 @@ import RescueManagementPage from './pages/RescueManagementPage';
 import StationManagementPage from './pages/StationManagementPage';
 import FloodManagementPage from './pages/FloodManagementPage';
 import RainfallManagementPage from './pages/RainfallManagementPage';
+import FloodAlertManagementPage from './pages/FloodAlertManagementPage';
 import StationDetailPage from './pages/StationDetailPage';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
@@ -40,6 +41,7 @@ function App() {
                 <Route path="/management/stations" element={<StationManagementPage />} />
                 <Route path="/management/floods" element={<FloodManagementPage />} />
                 <Route path="/management/rainfall" element={<RainfallManagementPage />} />
+                <Route path="/management/alerts" element={<FloodAlertManagementPage />} />
                 <Route path="/management/users" element={<UserManagementPage />} />
               </Route>
             </Route>
