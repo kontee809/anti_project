@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getAdminStations, createAdminStation, updateAdminStation, deleteAdminStation } from '../services/api';
 import { Plus, Edit, Trash2, X, Activity, Droplets } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import IoTSimulatorPanel from '../components/IoTSimulatorPanel';
 
 const StationManagementPage = () => {
   const [stations, setStations] = useState([]);
@@ -74,6 +75,10 @@ const StationManagementPage = () => {
           <Plus size={18} /> Thêm trạm mới
         </button>
       </div>
+      
+      {localStorage.getItem('role') === 'ADMIN' && (
+        <IoTSimulatorPanel stations={stations} onUpdate={fetchStations} />
+      )}
       
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <table className="w-full text-left">
