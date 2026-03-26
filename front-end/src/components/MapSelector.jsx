@@ -43,7 +43,7 @@ const MapSelector = ({ position, setPosition, setAddress, triggerFocus }) => {
   }, [triggerFocus]); // Fly to position only when triggerFocus changes (manual focus request)
 
   return (
-    <div className="absolute inset-0 z-0 h-full w-full">
+    <div className="absolute inset-0 z-0 h-full w-full" data-test-id="map-selector">
       {position ? (
         <MapContainer 
           center={position} 
@@ -59,7 +59,7 @@ const MapSelector = ({ position, setPosition, setAddress, triggerFocus }) => {
           <MapEvents position={position} setPosition={setPosition} setAddress={setAddress} />
         </MapContainer>
       ) : (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 gap-3">
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 gap-3" data-test-id="map-selector-loading">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-red-600"></div>
           <span className="text-sm font-semibold text-slate-500">Đang tìm vị trí của bạn...</span>
         </div>

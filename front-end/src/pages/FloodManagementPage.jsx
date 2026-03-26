@@ -142,11 +142,11 @@ const FloodManagementPage = () => {
   const criticalCount = analytics.critical || 0;
 
   return (
-    <div className="p-8 max-w-7xl mx-auto w-full space-y-6">
+    <div className="p-8 max-w-7xl mx-auto w-full space-y-6" data-test-id="flood-mgmt-page">
       
       {/* Toast */}
       {toast && (
-        <div className={`fixed top-24 right-8 z-50 px-5 py-3 rounded-xl font-bold shadow-xl text-sm flex items-center gap-2 transition-all ${toast.type === 'error' ? 'bg-red-500 text-white' : 'bg-emerald-500 text-white'}`}>
+        <div className={`fixed top-24 right-8 z-50 px-5 py-3 rounded-xl font-bold shadow-xl text-sm flex items-center gap-2 transition-all ${toast.type === 'error' ? 'bg-red-500 text-white' : 'bg-emerald-500 text-white'}`} data-test-id="flood-mgmt-toast">
           {toast.type === 'error' ? <AlertTriangle size={18} /> : <CheckCircle size={18} />}
           {toast.msg}
         </div>
@@ -209,11 +209,13 @@ const FloodManagementPage = () => {
             <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}
               placeholder="Tìm theo ID, địa chỉ, mô tả..."
               className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium"
+              data-test-id="flood-mgmt-input-search"
             />
           </div>
           
           <select value={filterSeverity} onChange={(e) => setFilterSeverity(e.target.value)}
             className="py-2.5 px-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500"
+            data-test-id="flood-mgmt-select-severity"
           >
             <option value="">Tất cả mức độ</option>
             <option value="LOW">Thấp</option>
@@ -224,6 +226,7 @@ const FloodManagementPage = () => {
 
           <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}
             className="py-2.5 px-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500"
+            data-test-id="flood-mgmt-select-status"
           >
             <option value="">Tất cả trạng thái</option>
             <option value="PENDING">Chờ duyệt</option>
@@ -233,6 +236,7 @@ const FloodManagementPage = () => {
 
           <select value={filterSource} onChange={(e) => setFilterSource(e.target.value)}
             className="py-2.5 px-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500"
+            data-test-id="flood-mgmt-select-source"
           >
             <option value="">Tất cả nguồn</option>
             <option value="USER">Người dùng</option>
@@ -242,6 +246,7 @@ const FloodManagementPage = () => {
 
           <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}
             className="py-2.5 px-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500"
+            data-test-id="flood-mgmt-select-sort"
           >
             <option value="time">Mới nhất</option>
             <option value="level">Mức ngập cao nhất</option>
@@ -253,10 +258,10 @@ const FloodManagementPage = () => {
         {selectedIds.size > 0 && (
           <div className="mt-3 pt-3 border-t border-slate-100 flex items-center gap-3">
             <span className="text-sm font-bold text-slate-600">{selectedIds.size} đã chọn</span>
-            <button onClick={() => handleBulkAction('verify')} className="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded-lg transition flex items-center gap-1"><CheckCircle size={14} /> Xác minh</button>
-            <button onClick={() => handleBulkAction('reject')} className="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-bold rounded-lg transition flex items-center gap-1"><XCircle size={14} /> Từ chối</button>
-            <button onClick={() => handleBulkAction('resolve')} className="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold rounded-lg transition flex items-center gap-1"><ShieldCheck size={14} /> Xử lý xong</button>
-            <button onClick={() => setSelectedIds(new Set())} className="text-xs text-slate-500 hover:text-slate-700 font-semibold ml-2">Bỏ chọn</button>
+            <button onClick={() => handleBulkAction('verify')} className="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded-lg transition flex items-center gap-1" data-test-id="flood-mgmt-bulk-verify"><CheckCircle size={14} /> Xác minh</button>
+            <button onClick={() => handleBulkAction('reject')} className="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-bold rounded-lg transition flex items-center gap-1" data-test-id="flood-mgmt-bulk-reject"><XCircle size={14} /> Từ chối</button>
+            <button onClick={() => handleBulkAction('resolve')} className="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold rounded-lg transition flex items-center gap-1" data-test-id="flood-mgmt-bulk-resolve"><ShieldCheck size={14} /> Xử lý xong</button>
+            <button onClick={() => setSelectedIds(new Set())} className="text-xs text-slate-500 hover:text-slate-700 font-semibold ml-2" data-test-id="flood-mgmt-bulk-deselect">Bỏ chọn</button>
           </div>
         )}
       </div>
@@ -264,12 +269,12 @@ const FloodManagementPage = () => {
       {/* Table */}
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left">
+          <table className="w-full text-left" data-test-id="flood-mgmt-table">
             <thead className="bg-slate-50 border-b border-slate-200">
               <tr>
                 <th className="p-4 w-10">
                   <input type="checkbox" checked={selectedIds.size === filteredReports.length && filteredReports.length > 0}
-                    onChange={toggleSelectAll} className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+                    onChange={toggleSelectAll} className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" data-test-id="flood-mgmt-checkbox-all" />
                 </th>
                 <th className="p-4 font-semibold text-slate-600 text-xs uppercase">ID</th>
                 <th className="p-4 font-semibold text-slate-600 text-xs uppercase">Vị trí</th>
@@ -292,10 +297,10 @@ const FloodManagementPage = () => {
                 const stat = STATUS_CONFIG[r.status] || STATUS_CONFIG.PENDING;
                 const src = SOURCE_CONFIG[r.reportedBy] || SOURCE_CONFIG.USER;
                 return (
-                  <tr key={r.id} className={`border-b border-slate-50 hover:bg-slate-50 transition-colors ${r.severityLevel === 'CRITICAL' ? 'bg-red-50/30' : ''}`}>
+                  <tr key={r.id} className={`border-b border-slate-50 hover:bg-slate-50 transition-colors ${r.severityLevel === 'CRITICAL' ? 'bg-red-50/30' : ''}`} data-test-id={`flood-mgmt-row-${r.id}`}>
                     <td className="p-4">
                       <input type="checkbox" checked={selectedIds.has(r.id)} onChange={() => toggleSelect(r.id)}
-                        className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+                        className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" data-test-id={`flood-mgmt-checkbox-${r.id}`} />
                     </td>
                     <td className="p-4 font-bold text-slate-700 text-sm">#{r.id}</td>
                     <td className="p-4 max-w-[200px]">
@@ -327,15 +332,15 @@ const FloodManagementPage = () => {
                     </td>
                     <td className="p-4">
                       <div className="flex gap-1.5 justify-end">
-                        <button onClick={() => setSelectedReport(r)} className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition" title="Chi tiết"><Eye size={16} /></button>
+                        <button onClick={() => setSelectedReport(r)} className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition" title="Chi tiết" data-test-id={`flood-mgmt-btn-view-${r.id}`}><Eye size={16} /></button>
                         {r.status === 'PENDING' && (
                           <>
-                            <button onClick={() => handleAction(r.id, 'verify')} className="p-1.5 text-emerald-500 hover:bg-emerald-50 rounded-lg transition" title="Xác minh"><CheckCircle size={16} /></button>
-                            <button onClick={() => handleAction(r.id, 'reject')} className="p-1.5 text-red-400 hover:bg-red-50 rounded-lg transition" title="Từ chối"><XCircle size={16} /></button>
+                            <button onClick={() => handleAction(r.id, 'verify')} className="p-1.5 text-emerald-500 hover:bg-emerald-50 rounded-lg transition" title="Xác minh" data-test-id={`flood-mgmt-btn-verify-${r.id}`}><CheckCircle size={16} /></button>
+                            <button onClick={() => handleAction(r.id, 'reject')} className="p-1.5 text-red-400 hover:bg-red-50 rounded-lg transition" title="Từ chối" data-test-id={`flood-mgmt-btn-reject-${r.id}`}><XCircle size={16} /></button>
                           </>
                         )}
                         {r.status === 'VERIFIED' && (
-                          <button onClick={() => handleAction(r.id, 'resolve')} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition" title="Xử lý xong"><ShieldCheck size={16} /></button>
+                          <button onClick={() => handleAction(r.id, 'resolve')} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition" title="Xử lý xong" data-test-id={`flood-mgmt-btn-resolve-${r.id}`}><ShieldCheck size={16} /></button>
                         )}
                       </div>
                     </td>
@@ -349,11 +354,11 @@ const FloodManagementPage = () => {
 
       {/* Detail Modal */}
       {selectedReport && (
-        <div className="fixed inset-0 z-[2000] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[2000] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4" data-test-id="flood-mgmt-detail-modal">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden flex flex-col max-h-[90vh]">
             <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
               <h2 className="text-lg font-bold text-slate-800">Chi tiết báo cáo #{selectedReport.id}</h2>
-              <button onClick={() => setSelectedReport(null)} className="p-2 text-slate-400 hover:text-slate-600 bg-white rounded-full shadow-sm"><X size={18} /></button>
+              <button onClick={() => setSelectedReport(null)} className="p-2 text-slate-400 hover:text-slate-600 bg-white rounded-full shadow-sm" data-test-id="flood-mgmt-modal-btn-close"><X size={18} /></button>
             </div>
             <div className="p-6 overflow-y-auto space-y-5">
               <div className="grid grid-cols-2 gap-4 text-sm">
@@ -416,14 +421,14 @@ const FloodManagementPage = () => {
               {selectedReport.status === 'PENDING' && (
                 <div className="flex gap-3 pt-2">
                   <button onClick={() => handleAction(selectedReport.id, 'verify')}
-                    className="flex-1 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-sm transition flex items-center justify-center gap-1.5"><CheckCircle size={16} /> Xác minh</button>
+                    className="flex-1 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-sm transition flex items-center justify-center gap-1.5" data-test-id="flood-mgmt-modal-btn-verify"><CheckCircle size={16} /> Xác minh</button>
                   <button onClick={() => handleAction(selectedReport.id, 'reject')}
-                    className="flex-1 py-2.5 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl text-sm transition flex items-center justify-center gap-1.5"><XCircle size={16} /> Từ chối</button>
+                    className="flex-1 py-2.5 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl text-sm transition flex items-center justify-center gap-1.5" data-test-id="flood-mgmt-modal-btn-reject"><XCircle size={16} /> Từ chối</button>
                 </div>
               )}
               {selectedReport.status === 'VERIFIED' && (
                 <button onClick={() => handleAction(selectedReport.id, 'resolve')}
-                  className="w-full py-2.5 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl text-sm transition flex items-center justify-center gap-1.5"><ShieldCheck size={16} /> Đánh dấu Đã xử lý</button>
+                  className="w-full py-2.5 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl text-sm transition flex items-center justify-center gap-1.5" data-test-id="flood-mgmt-modal-btn-resolve"><ShieldCheck size={16} /> Đánh dấu Đã xử lý</button>
               )}
             </div>
           </div>

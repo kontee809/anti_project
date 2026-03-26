@@ -73,16 +73,16 @@ const FloodAlertManagementPage = () => {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto w-full space-y-6">
+    <div className="p-8 max-w-7xl mx-auto w-full space-y-6" data-test-id="flood-alert-page">
       {toast && (
-        <div className="fixed top-24 right-8 z-50 px-5 py-3 rounded-xl font-bold shadow-xl text-sm bg-emerald-500 text-white flex items-center gap-2">
+        <div className="fixed top-24 right-8 z-50 px-5 py-3 rounded-xl font-bold shadow-xl text-sm bg-emerald-500 text-white flex items-center gap-2" data-test-id="flood-alert-toast">
           <CheckCircle size={18} />{toast}
         </div>
       )}
 
       {/* Critical alert banner */}
       {(stats.critical || 0) > 0 && (
-        <div className="bg-red-50 border-l-4 border-red-600 p-4 rounded-r-xl flex items-start gap-4 shadow-sm animate-[pulse_2s_ease-in-out_infinite]">
+        <div className="bg-red-50 border-l-4 border-red-600 p-4 rounded-r-xl flex items-start gap-4 shadow-sm animate-[pulse_2s_ease-in-out_infinite]" data-test-id="flood-alert-critical-banner">
           <AlertTriangle className="text-red-600 mt-0.5 shrink-0" size={22} />
           <div>
             <h3 className="font-bold text-red-800 uppercase tracking-wide">CẢNH BÁO AI — MỨC NGHIÊM TRỌNG</h3>
@@ -98,12 +98,12 @@ const FloodAlertManagementPage = () => {
 
       {/* System Status */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+        <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm" data-test-id="flood-alert-stat-total">
           <p className="text-xs font-bold text-slate-500 uppercase">Tổng cảnh báo</p>
           <h3 className="text-2xl font-bold text-slate-800 mt-1">{stats.total || 0}</h3>
           <p className="text-xs text-slate-400 mt-1">{stats.active || 0} đang hoạt động</p>
         </div>
-        <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+        <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm" data-test-id="flood-alert-stat-critical">
           <p className="text-xs font-bold text-slate-500 uppercase">Nghiêm trọng</p>
           <h3 className="text-2xl font-bold text-red-600 mt-1">{stats.critical || 0}</h3>
           <p className="text-xs text-slate-400 mt-1">{stats.high || 0} mức cao</p>
@@ -140,14 +140,14 @@ const FloodAlertManagementPage = () => {
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}
             placeholder="Tìm theo ID, địa chỉ, lý do..."
-            className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white border border-slate-200 outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium" />
+            className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white border border-slate-200 outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium" data-test-id="flood-alert-input-search" />
         </div>
-        <select value={filterRisk} onChange={(e) => setFilterRisk(e.target.value)} className="py-2.5 px-3 rounded-xl bg-white border border-slate-200 text-sm font-medium outline-none">
+        <select value={filterRisk} onChange={(e) => setFilterRisk(e.target.value)} className="py-2.5 px-3 rounded-xl bg-white border border-slate-200 text-sm font-medium outline-none" data-test-id="flood-alert-select-risk">
           <option value="">Tất cả mức độ</option>
           <option value="LOW">Thấp</option><option value="MEDIUM">Trung bình</option>
           <option value="HIGH">Cao</option><option value="CRITICAL">Nghiêm trọng</option>
         </select>
-        <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="py-2.5 px-3 rounded-xl bg-white border border-slate-200 text-sm font-medium outline-none">
+        <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="py-2.5 px-3 rounded-xl bg-white border border-slate-200 text-sm font-medium outline-none" data-test-id="flood-alert-select-status">
           <option value="">Tất cả trạng thái</option>
           <option value="ACTIVE">Đang hoạt động</option><option value="ACKNOWLEDGED">Đã xác nhận</option><option value="RESOLVED">Đã xử lý</option>
         </select>
@@ -156,7 +156,7 @@ const FloodAlertManagementPage = () => {
       {/* Table */}
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left">
+          <table className="w-full text-left" data-test-id="flood-alert-table">
             <thead className="bg-slate-50 border-b border-slate-200">
               <tr>
                 <th className="p-4 font-semibold text-slate-600 text-xs uppercase">ID</th>
@@ -172,14 +172,14 @@ const FloodAlertManagementPage = () => {
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan="9" className="p-8 text-center text-slate-500">Đang tải...</td></tr>
+                <tr><td colSpan="9" className="p-8 text-center text-slate-500" data-test-id="flood-alert-loading">Đang tải...</td></tr>
               ) : filtered.length === 0 ? (
                 <tr><td colSpan="9" className="p-8 text-center text-slate-400">Chưa có cảnh báo nào.</td></tr>
               ) : filtered.map(a => {
                 const risk = RISK_CONFIG[a.riskLevel] || RISK_CONFIG.LOW;
                 const stat = STATUS_CONFIG[a.status] || STATUS_CONFIG.ACTIVE;
                 return (
-                  <tr key={a.id} className={`border-b border-slate-50 hover:bg-slate-50 transition ${a.riskLevel === 'CRITICAL' && a.status === 'ACTIVE' ? 'bg-red-50/40' : ''}`}>
+                  <tr key={a.id} className={`border-b border-slate-50 hover:bg-slate-50 transition ${a.riskLevel === 'CRITICAL' && a.status === 'ACTIVE' ? 'bg-red-50/40' : ''}`} data-test-id={`flood-alert-row-${a.id}`}>
                     <td className="p-4 font-bold text-slate-700 text-sm">#{a.id}</td>
                     <td className="p-4 max-w-[180px]">
                       <div className="text-sm font-medium text-slate-700 truncate">{a.address || 'N/A'}</div>
@@ -207,12 +207,12 @@ const FloodAlertManagementPage = () => {
                     <td className="p-4 text-xs text-slate-500 whitespace-nowrap">{a.createdAt ? new Date(a.createdAt).toLocaleString('vi-VN') : 'N/A'}</td>
                     <td className="p-4">
                       <div className="flex gap-1.5 justify-end">
-                        <button onClick={() => setSelectedAlert(a)} className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition"><Eye size={16} /></button>
+                        <button onClick={() => setSelectedAlert(a)} className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition" data-test-id={`flood-alert-btn-view-${a.id}`}><Eye size={16} /></button>
                         {a.status === 'ACTIVE' && (
-                          <button onClick={() => handleAction(a.id, 'acknowledge')} className="p-1.5 text-amber-500 hover:bg-amber-50 rounded-lg transition" title="Xác nhận"><Bell size={16} /></button>
+                          <button onClick={() => handleAction(a.id, 'acknowledge')} className="p-1.5 text-amber-500 hover:bg-amber-50 rounded-lg transition" title="Xác nhận" data-test-id={`flood-alert-btn-acknowledge-${a.id}`}><Bell size={16} /></button>
                         )}
                         {(a.status === 'ACTIVE' || a.status === 'ACKNOWLEDGED') && (
-                          <button onClick={() => handleAction(a.id, 'resolve')} className="p-1.5 text-emerald-500 hover:bg-emerald-50 rounded-lg transition" title="Xử lý xong"><ShieldCheck size={16} /></button>
+                          <button onClick={() => handleAction(a.id, 'resolve')} className="p-1.5 text-emerald-500 hover:bg-emerald-50 rounded-lg transition" title="Xử lý xong" data-test-id={`flood-alert-btn-resolve-${a.id}`}><ShieldCheck size={16} /></button>
                         )}
                       </div>
                     </td>
@@ -226,11 +226,11 @@ const FloodAlertManagementPage = () => {
 
       {/* Detail Modal */}
       {selectedAlert && (
-        <div className="fixed inset-0 z-[2000] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[2000] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4" data-test-id="flood-alert-detail-modal">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden flex flex-col max-h-[90vh]">
             <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
               <h2 className="text-lg font-bold text-slate-800">Cảnh báo #{selectedAlert.id}</h2>
-              <button onClick={() => setSelectedAlert(null)} className="p-2 text-slate-400 hover:text-slate-600 bg-white rounded-full shadow-sm"><X size={18} /></button>
+              <button onClick={() => setSelectedAlert(null)} className="p-2 text-slate-400 hover:text-slate-600 bg-white rounded-full shadow-sm" data-test-id="flood-alert-modal-btn-close"><X size={18} /></button>
             </div>
             <div className="p-6 overflow-y-auto space-y-4">
               <div className="grid grid-cols-2 gap-4 text-sm">
@@ -273,14 +273,14 @@ const FloodAlertManagementPage = () => {
               {selectedAlert.status === 'ACTIVE' && (
                 <div className="flex gap-3 pt-2">
                   <button onClick={() => handleAction(selectedAlert.id, 'acknowledge')}
-                    className="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-sm transition flex items-center justify-center gap-1.5"><Bell size={16} /> Xác nhận</button>
+                    className="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-sm transition flex items-center justify-center gap-1.5" data-test-id="flood-alert-modal-btn-acknowledge"><Bell size={16} /> Xác nhận</button>
                   <button onClick={() => handleAction(selectedAlert.id, 'resolve')}
-                    className="flex-1 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-sm transition flex items-center justify-center gap-1.5"><ShieldCheck size={16} /> Xử lý xong</button>
+                    className="flex-1 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-sm transition flex items-center justify-center gap-1.5" data-test-id="flood-alert-modal-btn-resolve"><ShieldCheck size={16} /> Xử lý xong</button>
                 </div>
               )}
               {selectedAlert.status === 'ACKNOWLEDGED' && (
                 <button onClick={() => handleAction(selectedAlert.id, 'resolve')}
-                  className="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-sm transition flex items-center justify-center gap-1.5"><ShieldCheck size={16} /> Đánh dấu Đã xử lý</button>
+                  className="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-sm transition flex items-center justify-center gap-1.5" data-test-id="flood-alert-modal-btn-resolve-ack"><ShieldCheck size={16} /> Đánh dấu Đã xử lý</button>
               )}
             </div>
           </div>

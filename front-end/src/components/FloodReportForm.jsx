@@ -56,7 +56,7 @@ const FloodReportForm = ({
   };
 
   return (
-    <div className="relative z-10 w-full lg:w-[450px] bg-white lg:rounded-2xl shadow-2xl flex flex-col h-full lg:h-auto lg:max-h-[calc(100vh-5rem)] overflow-hidden border border-slate-100">
+    <div className="relative z-10 w-full lg:w-[450px] bg-white lg:rounded-2xl shadow-2xl flex flex-col h-full lg:h-auto lg:max-h-[calc(100vh-5rem)] overflow-hidden border border-slate-100" data-test-id="flood-report-form-panel">
       
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white p-5 shrink-0 relative overflow-hidden">
@@ -89,6 +89,7 @@ const FloodReportForm = ({
           {SOURCE_TABS.map(t => (
             <button key={t.key} type="button" onClick={() => setSource(t.key)}
               className={`flex-1 py-2 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all ${source === t.key ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+              data-test-id={`flood-report-source-${t.key.toLowerCase()}`}
             >
               {t.icon} {t.label}
             </button>
@@ -100,13 +101,14 @@ const FloodReportForm = ({
           {CATEGORY_TABS.map(tab => (
             <button key={tab} type="button" onClick={() => setCategory(tab)}
               className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${category === tab ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+              data-test-id={`flood-report-category-${tab.replace(/\s+/g, '-')}`}
             >
               {tab}
             </button>
           ))}
         </div>
 
-        <form id="flood-report-form" onSubmit={handleSubmit} className="space-y-5">
+        <form id="flood-report-form" onSubmit={handleSubmit} className="space-y-5" data-test-id="form-flood-report">
           
           {/* Location Section */}
           <div className="space-y-3">
@@ -117,9 +119,11 @@ const FloodReportForm = ({
               <div className="flex bg-slate-100 p-0.5 rounded-lg">
                 <button type="button" onClick={() => setAddressMode('map')}
                   className={`px-2.5 py-1 text-[11px] font-bold rounded-md transition-all ${addressMode === 'map' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500'}`}
+                  data-test-id="flood-report-btn-address-map"
                 >Bản đồ</button>
                 <button type="button" onClick={() => setAddressMode('manual')}
                   className={`px-2.5 py-1 text-[11px] font-bold rounded-md transition-all ${addressMode === 'manual' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500'}`}
+                  data-test-id="flood-report-btn-address-manual"
                 >Nhập tay</button>
               </div>
             </div>
@@ -133,6 +137,7 @@ const FloodReportForm = ({
                 readOnly={addressMode === 'map'} required
                 placeholder="Địa chỉ điểm ngập *"
                 className={`w-full pl-10 pr-4 py-3 rounded-xl border outline-none font-medium text-sm transition-all ${addressMode === 'map' ? 'bg-blue-50/50 border-blue-100 text-blue-900 cursor-not-allowed' : 'bg-slate-50 border-slate-200 focus:bg-white focus:ring-2 focus:ring-blue-500'}`}
+                data-test-id="flood-report-input-address"
               />
             </div>
 
@@ -160,6 +165,7 @@ const FloodReportForm = ({
                 <label className="block text-[11px] text-slate-500 font-bold mb-1">Loại ngập *</label>
                 <select value={formData.floodType || 'URBAN'} onChange={(e) => handleChange('floodType', e.target.value)}
                   className="w-full p-2.5 rounded-lg bg-white border border-slate-200 outline-none focus:ring-2 focus:ring-blue-500 font-medium text-sm"
+                  data-test-id="flood-report-select-type"
                 >
                   {FLOOD_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
@@ -172,6 +178,7 @@ const FloodReportForm = ({
                     onChange={(e) => handleChange('floodLevelCm', parseInt(e.target.value) || 0)} required
                     placeholder="0"
                     className="flex-1 p-2.5 rounded-lg bg-white border border-slate-200 outline-none focus:ring-2 focus:ring-blue-500 font-bold text-sm"
+                    data-test-id="flood-report-input-level"
                   />
                   <span className={`px-3 py-2 rounded-lg text-xs font-bold ${severity.color} transition-all shrink-0`}>
                     {severity.label}
@@ -184,6 +191,7 @@ const FloodReportForm = ({
                 <input type="datetime-local" value={formData.timestamp || ''} 
                   onChange={(e) => handleChange('timestamp', e.target.value)}
                   className="w-full p-2.5 rounded-lg bg-white border border-slate-200 outline-none focus:ring-2 focus:ring-blue-500 font-medium text-sm"
+                  data-test-id="flood-report-input-timestamp"
                 />
               </div>
             </div>
@@ -201,6 +209,7 @@ const FloodReportForm = ({
               {QUICK_TAGS.map(tag => (
                 <button key={tag} type="button" onClick={() => handleTagClick(tag)}
                   className="px-2.5 py-1 bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 text-[11px] font-bold rounded-lg border border-slate-200 hover:border-blue-200 transition-colors active:scale-95"
+                  data-test-id={`flood-report-tag-${tag.replace(/\s+/g, '-')}`}
                 >+ {tag}</button>
               ))}
             </div>
@@ -209,6 +218,7 @@ const FloodReportForm = ({
               <textarea value={formData.description || ''} onChange={(e) => handleChange('description', e.target.value)}
                 placeholder="Mô tả tình trạng ngập (giao thông, nhà dân, độ sâu...)"
                 className="w-full p-3.5 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 font-medium h-24 resize-none text-sm pb-8 transition-all"
+                data-test-id="flood-report-input-description"
               />
               <div className="absolute bottom-3 right-3.5 text-[11px] font-bold text-slate-400">
                 {(formData.description || '').length} / 500
@@ -230,6 +240,7 @@ const FloodReportForm = ({
       <div className="p-5 bg-slate-50 border-t border-slate-100 shrink-0">
         <button form="flood-report-form" type="submit" disabled={isSubmitting}
           className="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 active:scale-[0.98] text-white font-bold text-sm uppercase tracking-wider shadow-lg shadow-blue-500/30 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
+          data-test-id="flood-report-submit"
         >
           {isSubmitting ? (
             <div className="flex items-center gap-2">

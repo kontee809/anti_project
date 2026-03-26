@@ -35,7 +35,7 @@ const EmergencyForm = ({
   };
 
   return (
-    <div className="relative z-10 w-full lg:w-[450px] bg-white lg:rounded-2xl shadow-2xl flex flex-col h-full lg:h-auto lg:max-h-[calc(100vh-4rem)] overflow-hidden border border-slate-100">
+    <div className="relative z-10 w-full lg:w-[450px] bg-white lg:rounded-2xl shadow-2xl flex flex-col h-full lg:h-auto lg:max-h-[calc(100vh-4rem)] overflow-hidden border border-slate-100" data-test-id="emergency-form-panel">
       
       {/* Header */}
       <div className="bg-gradient-to-r from-red-600 to-rose-600 text-white p-6 shrink-0 relative overflow-hidden">
@@ -62,7 +62,7 @@ const EmergencyForm = ({
           </div>
         )}
 
-        <form id="emergency-form" onSubmit={onSubmit} className="space-y-6">
+        <form id="emergency-form" onSubmit={onSubmit} className="space-y-6" data-test-id="form-emergency">
           
           {/* Personal Info */}
           <div className="space-y-4">
@@ -78,7 +78,8 @@ const EmergencyForm = ({
                 <input 
                   type="text" name="name" value={formData.name} onChange={handleInputChange} required
                   placeholder="Họ và tên *" 
-                  className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:bg-white focus:ring-2 focus:ring-red-500 font-medium transition-all text-sm" 
+                  className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:bg-white focus:ring-2 focus:ring-red-500 font-medium transition-all text-sm"
+                  data-test-id="form-emergency-input-name"
                 />
               </div>
               
@@ -89,14 +90,15 @@ const EmergencyForm = ({
                 <input 
                   type="tel" name="phone" value={formData.phone} onChange={handleInputChange} required
                   placeholder="Số điện thoại *" 
-                  className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:bg-white focus:ring-2 focus:ring-red-500 font-medium transition-all text-sm" 
+                  className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:bg-white focus:ring-2 focus:ring-red-500 font-medium transition-all text-sm"
+                  data-test-id="form-emergency-input-phone"
                 />
               </div>
             </div>
 
             <label className="flex items-center gap-3 bg-red-50/50 p-3.5 rounded-xl border border-red-100 cursor-pointer hover:bg-red-50 transition-colors group">
               <div className="relative flex items-center justify-center">
-                <input type="checkbox" name="isForSomeoneElse" checked={formData.isForSomeoneElse} onChange={handleInputChange} className="peer sr-only" />
+                <input type="checkbox" name="isForSomeoneElse" checked={formData.isForSomeoneElse} onChange={handleInputChange} className="peer sr-only" data-test-id="form-emergency-checkbox-someone-else" />
                 <div className="w-5 h-5 border-2 border-red-300 rounded bg-white peer-checked:bg-red-500 peer-checked:border-red-500 transition-all flex items-center justify-center">
                   <CheckCircle size={14} className="text-white opacity-0 peer-checked:opacity-100 transition-opacity" />
                 </div>
@@ -121,6 +123,7 @@ const EmergencyForm = ({
                 <button
                   key={tag} type="button" onClick={() => handleTagClick(tag)}
                   className="px-3 py-1.5 bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 text-[11px] font-bold rounded-lg border border-slate-200 hover:border-red-200 transition-colors active:scale-95"
+                  data-test-id={`form-emergency-tag-${tag.replace(/\s+/g, '-')}`}
                 >
                   + {tag}
                 </button>
@@ -132,6 +135,7 @@ const EmergencyForm = ({
                 name="description" value={formData.description} onChange={handleInputChange} required
                 placeholder="Mô tả chi tiết tình hình (mực nước, số người, nguy hiểm)... *"
                 className="w-full p-4 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:bg-white focus:ring-2 focus:ring-red-500 font-medium h-28 resize-none transition-all text-sm pb-8"
+                data-test-id="form-emergency-input-description"
               />
               <div className="absolute bottom-3 right-4 text-xs font-bold text-slate-400">
                 {formData.description.length} / 500
@@ -152,12 +156,14 @@ const EmergencyForm = ({
                 <button
                   type="button" onClick={() => setAddressMode('map')}
                   className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${addressMode === 'map' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                  data-test-id="form-emergency-btn-address-map"
                 >
                   Bản đồ
                 </button>
                 <button
                   type="button" onClick={() => setAddressMode('manual')}
                   className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${addressMode === 'manual' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                  data-test-id="form-emergency-btn-address-manual"
                 >
                   Nhập tay
                 </button>
@@ -171,7 +177,8 @@ const EmergencyForm = ({
               <input 
                 type="text" name="address" value={formData.address} onChange={handleInputChange}
                 readOnly={addressMode === 'map'} required placeholder="Địa chỉ chi tiết *" 
-                className={`w-full pl-11 pr-4 py-3.5 rounded-xl border outline-none font-medium transition-all text-sm ${addressMode === 'map' ? 'bg-red-50/50 border-red-100 text-red-900 focus:ring-0 cursor-not-allowed' : 'bg-slate-50 border-slate-200 focus:bg-white focus:ring-2 focus:ring-red-500 text-slate-800'}`} 
+                className={`w-full pl-11 pr-4 py-3.5 rounded-xl border outline-none font-medium transition-all text-sm ${addressMode === 'map' ? 'bg-red-50/50 border-red-100 text-red-900 focus:ring-0 cursor-not-allowed' : 'bg-slate-50 border-slate-200 focus:bg-white focus:ring-2 focus:ring-red-500 text-slate-800'}`}
+                data-test-id="form-emergency-input-address"
               />
             </div>
 
@@ -208,6 +215,7 @@ const EmergencyForm = ({
           type="submit" 
           disabled={isSubmitting}
           className="w-full py-4 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 active:scale-[0.98] text-white font-bold text-[15px] uppercase tracking-wider shadow-lg shadow-red-500/30 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center"
+          data-test-id="form-emergency-submit"
         >
           {isSubmitting ? (
             <div className="flex items-center gap-2">
