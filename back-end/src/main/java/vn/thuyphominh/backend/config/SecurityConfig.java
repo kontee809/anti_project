@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**", "/api/test").permitAll()
                         .requestMatchers("/api/admin/**", "/api/dev/**").hasRole("ADMIN")
-                        .requestMatchers("/api/flood-reports/**", "/api/support/**", "/api/rainfall-stations/**").authenticated()
+                        .requestMatchers("/api/flood-reports/**", "/api/support/**", "/api/rainfall-stations/**", "/api/flood-alerts/**").authenticated()
                         .anyRequest().authenticated())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
