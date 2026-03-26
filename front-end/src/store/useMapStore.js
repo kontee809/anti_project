@@ -6,6 +6,7 @@ export const useMapStore = create((set) => ({
     rainfall: true,
     warnings: true,
     rescueRequests: true,
+    floodReports: true,
   },
   toggleLayer: (layerName) =>
     set((state) => ({

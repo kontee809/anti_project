@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, ZoomControl, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { Droplets, CloudRain, TriangleAlert, LifeBuoy } from 'lucide-react';
+import { Droplets, CloudRain, TriangleAlert, LifeBuoy, Waves } from 'lucide-react';
 import { useMapStore } from '../../store/useMapStore';
 import { rainfallStations, warningTowers } from '../../data/mockData';
 import MarkerPopup from './MarkerPopup';
-import { getRescueRequests, getPublicStations } from '../../services/api';
+import { getRescueRequests, getPublicStations, getFloodReports } from '../../services/api';
 
 const MapController = ({ targetCoord, zoomLevel }) => {
   const map = useMap();
@@ -51,6 +51,7 @@ const MapDisplay = () => {
   const [flyToTarget, setFlyToTarget] = useState(null);
   const [rescueRequests, setRescueRequests] = useState([]);
   const [stations, setStations] = useState([]);
+  const [floodReports, setFloodReports] = useState([]);
 
   useEffect(() => {
     let intv;
@@ -71,6 +72,16 @@ const MapDisplay = () => {
     }
     return () => clearInterval(intv);
   }, [activeLayers.waterLevel]);
+
+  useEffect(() => {
+    let intv;
+    if (activeLayers.floodReports) {
+      const fetchReports = () => getFloodReports().then(data => setFloodReports(data)).catch(console.error);
+      fetchReports();
+      intv = setInterval(fetchReports, 8000);
+    }
+    return () => clearInterval(intv);
+  }, [activeLayers.floodReports]);
 
   const handleMarkerClick = (station) => {
     setActiveMarkerId(station.id);
@@ -246,6 +257,45 @@ const MapDisplay = () => {
                        </div>
                        {request.isForSomeoneElse && <p className="text-xs text-rose-500 font-bold mt-2 flex items-center gap-1">* <span className="underline">Lưu ý:</span> Đặt hộ người khác</p>}
                     </div>
+                  </div>
+                </div>
+              </Popup>
+            </Marker>
+          );
+        })}
+
+        {activeLayers.floodReports && floodReports.map((report) => {
+          const sevColor = report.severityLevel === 'CRITICAL' ? 'bg-red-600' : report.severityLevel === 'HIGH' ? 'bg-orange-500' : report.severityLevel === 'MEDIUM' ? 'bg-yellow-500' : 'bg-cyan-500';
+          const sevLabel = report.severityLevel === 'CRITICAL' ? 'Nghiêm trọng' : report.severityLevel === 'HIGH' ? 'Cao' : report.severityLevel === 'MEDIUM' ? 'Trung bình' : 'Thấp';
+          const isActive = activeMarkerId === `flood-${report.id}`;
+          const pulse = report.severityLevel === 'CRITICAL' ? 'animate-[pulse_1.5s_ease-in-out_infinite]' : '';
+
+          return (
+            <Marker
+              key={`flood-${report.id}`}
+              position={[report.latitude, report.longitude]}
+              icon={createCustomIcon(<Waves size={isActive ? 20 : 16} />, `${sevColor} ${pulse}`, isActive)}
+              eventHandlers={{ click: () => {
+                setActiveMarkerId(`flood-${report.id}`);
+                setFlyToTarget([report.latitude, report.longitude]);
+              }}}
+            >
+              <Popup className="custom-popup border-0 bg-transparent m-0 p-0" onClose={() => setActiveMarkerId(null)}>
+                <div className="bg-white rounded-xl shadow-2xl border border-slate-100 p-5 w-[280px]">
+                  <div className="flex items-center gap-2 mb-3 pb-3 border-b border-cyan-100">
+                    <div className={`p-1.5 text-white rounded-lg ${sevColor}`}><Waves size={18} /></div>
+                    <div>
+                      <h3 className="font-bold text-slate-800 text-base">Báo cáo ngập #{report.id}</h3>
+                      <span className={`text-[10px] font-bold uppercase ${sevColor.replace('bg-','text-')}`}>{sevLabel}</span>
+                    </div>
+                  </div>
+                  <div className="text-sm space-y-2 text-slate-700">
+                    <p className="flex justify-between"><span className="text-slate-500">Mức ngập:</span><span className="font-black text-lg text-blue-600">{report.floodLevelCm} cm</span></p>
+                    <p className="flex justify-between"><span className="text-slate-500">Loại:</span><span className="font-semibold">{report.floodType}</span></p>
+                    <p className="flex justify-between"><span className="text-slate-500">Độ tin cậy:</span><span className="font-semibold">{report.reliabilityScore}%</span></p>
+                    <p className="flex justify-between"><span className="text-slate-500">Nguồn:</span><span className="font-semibold">{report.reportedBy}</span></p>
+                    <p className="flex justify-between"><span className="text-slate-500">Thời gian:</span><span className="font-semibold">{report.createdAt ? new Date(report.createdAt).toLocaleString('vi-VN') : 'N/A'}</span></p>
+                    {report.description && <p className="bg-slate-50 p-2 rounded-lg text-slate-700 border border-slate-100 mt-1">{report.description}</p>}
                   </div>
                 </div>
               </Popup>
