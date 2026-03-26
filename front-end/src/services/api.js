@@ -104,4 +104,25 @@ export const stopSimulation = async (stationId) => {
   return response.data;
 };
 
+// FLOOD REPORTS API
+export const createFloodReport = async (data) => {
+  const response = await api.post('/flood-reports', data);
+  return response.data;
+};
+
+export const getFloodReports = async () => {
+  const response = await api.get('/flood-reports');
+  return response.data;
+};
+
+export const getNearbyFloodReports = async (lat, lng, radius = 5) => {
+  const response = await api.get(`/flood-reports/nearby?lat=${lat}&lng=${lng}&radius=${radius}`);
+  return response.data;
+};
+
+export const updateFloodReportStatus = async (id, status) => {
+  const response = await api.put(`/flood-reports/${id}/status`, { status });
+  return response.data;
+};
+
 export default api;
