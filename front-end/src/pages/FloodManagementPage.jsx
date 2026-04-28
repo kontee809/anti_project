@@ -3,16 +3,16 @@ import { getAdminFloodReports, getFloodAnalytics, verifyFloodReport, rejectFlood
 import { Waves, AlertTriangle, ShieldCheck, CheckCircle, XCircle, Search, Filter, X, Clock, MapPin, Eye, TrendingUp, Users, Cpu, BarChart3 } from 'lucide-react';
 
 const SEVERITY_CONFIG = {
-  LOW: { label: 'Thấp', bg: 'bg-blue-100 text-blue-700', dot: 'bg-blue-500' },
-  MEDIUM: { label: 'Trung bình', bg: 'bg-yellow-100 text-yellow-700', dot: 'bg-yellow-500' },
-  HIGH: { label: 'Cao', bg: 'bg-orange-100 text-orange-700', dot: 'bg-orange-500' },
-  CRITICAL: { label: 'Nghiêm trọng', bg: 'bg-red-100 text-red-700', dot: 'bg-red-500' },
+  LOW: { label: 'Thấp', bg: 'badge-dark badge-dark-info', dot: 'bg-blue-500' },
+  MEDIUM: { label: 'Trung bình', bg: 'badge-dark badge-dark-warning', dot: 'bg-yellow-500' },
+  HIGH: { label: 'Cao', bg: 'badge-dark badge-dark-warning', dot: 'bg-orange-500' },
+  CRITICAL: { label: 'Nghiêm trọng', bg: 'badge-dark badge-dark-danger', dot: 'bg-red-500' },
 };
 
 const STATUS_CONFIG = {
-  PENDING: { label: 'Chờ duyệt', bg: 'bg-slate-100 text-slate-600' },
-  VERIFIED: { label: 'Đã xác minh', bg: 'bg-emerald-100 text-emerald-700' },
-  RESOLVED: { label: 'Đã xử lý', bg: 'bg-blue-100 text-blue-600' },
+  PENDING: { label: 'Chờ duyệt', bg: 'badge-dark badge-dark-neutral' },
+  VERIFIED: { label: 'Đã xác minh', bg: 'badge-dark badge-dark-success' },
+  RESOLVED: { label: 'Đã xử lý', bg: 'badge-dark badge-dark-info' },
 };
 
 const SOURCE_CONFIG = {
@@ -142,7 +142,7 @@ const FloodManagementPage = () => {
   const criticalCount = analytics.critical || 0;
 
   return (
-    <div className="p-8 max-w-7xl mx-auto w-full space-y-6" data-test-id="flood-mgmt-page">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto w-full space-y-6 page-bg min-h-full" data-test-id="flood-mgmt-page">
       
       {/* Toast */}
       {toast && (
@@ -267,10 +267,10 @@ const FloodManagementPage = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+      <div className="ui-card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left" data-test-id="flood-mgmt-table">
-            <thead className="bg-slate-50 border-b border-slate-200">
+          <table className="ui-table" data-test-id="flood-mgmt-table">
+            <thead>
               <tr>
                 <th className="p-4 w-10">
                   <input type="checkbox" checked={selectedIds.size === filteredReports.length && filteredReports.length > 0}

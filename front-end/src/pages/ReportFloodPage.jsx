@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { createFloodReport, getFloodReports, getPublicStations } from '../services/api';
 import FloodReportMap from '../components/FloodReportMap';
 import FloodReportForm from '../components/FloodReportForm';
 import FloodSimulator from '../components/FloodSimulator';
 
 const ReportFloodPage = () => {
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     address: '',
     floodLevelCm: 10,

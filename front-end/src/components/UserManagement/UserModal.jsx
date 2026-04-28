@@ -37,58 +37,58 @@ const UserModal = ({ isOpen, onClose, onSubmit, initialData, currentUserEmail })
   };
 
   return (
-    <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in" data-test-id="user-modal-container">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95" data-test-id="user-modal">
+    <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm" data-test-id="user-modal-container">
+      <div className="bg-white rounded-[14px] shadow-[var(--shadow-xl)] w-full max-w-md overflow-hidden fade-slide-in" data-test-id="user-modal">
         <div className="flex items-center justify-between p-5 border-b border-slate-100">
           <h2 className="text-xl font-bold text-slate-800">
             {initialData ? 'Chỉnh sửa người dùng' : 'Thêm người dùng mới'}
           </h2>
-          <button onClick={onClose} className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-lg transition-colors" data-test-id="user-modal-button-close">
+          <button onClick={onClose} className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-[10px]" data-test-id="user-modal-button-close">
             <X size={20} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4" data-test-id="user-modal-form">
           <div>
-            <label className="block text-sm font-semibold text-slate-600 mb-1.5">Họ và Tên *</label>
+            <label className="ui-label">Họ và Tên *</label>
             <input 
               required
               type="text" 
               value={formData.name}
               onChange={e => setFormData({...formData, name: e.target.value})}
-              className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium text-slate-700"
+              className="ui-input"
               data-test-id="user-modal-input-name"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-600 mb-1.5">Email *</label>
+            <label className="ui-label">Email *</label>
             <input 
               required
               type="email" 
               value={formData.email}
               onChange={e => setFormData({...formData, email: e.target.value})}
-              className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium text-slate-700"
+              className="ui-input"
               data-test-id="user-modal-input-email"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-600 mb-1.5">Mật khẩu {initialData ? '(Tùy chọn)' : '*'}</label>
+            <label className="ui-label">Mật khẩu {initialData ? '(Tùy chọn)' : '*'}</label>
             <input 
               required={!initialData}
               type="password" 
               value={formData.password}
               onChange={e => setFormData({...formData, password: e.target.value})}
               placeholder={initialData ? "Để trống nếu không đổi mật khẩu" : ""}
-              className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium text-slate-700 placeholder-slate-400"
+              className="ui-input"
               data-test-id="user-modal-input-password"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-600 mb-1.5">Vai trò *</label>
+              <label className="ui-label">Vai trò *</label>
               {(() => {
                 const isEditingCurrent = initialData && initialData.email === currentUserEmail;
                 const isEditingAnotherAdmin = initialData && initialData.role === 'ADMIN' && !isEditingCurrent;
@@ -103,7 +103,7 @@ const UserModal = ({ isOpen, onClose, onSubmit, initialData, currentUserEmail })
                     onChange={e => setFormData({...formData, role: e.target.value})}
                     disabled={roleDisabled}
                     title={roleTooltip}
-                    className={`w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-medium text-slate-700 ${roleDisabled ? 'opacity-60 cursor-not-allowed' : ''}`}
+                    className={`ui-select ${roleDisabled ? 'opacity-60 cursor-not-allowed' : ''}`}
                     data-test-id="user-modal-select-role"
                   >
                     <option value="ADMIN" data-test-id="user-modal-option-admin">ADMIN</option>
@@ -113,11 +113,11 @@ const UserModal = ({ isOpen, onClose, onSubmit, initialData, currentUserEmail })
               })()}
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-600 mb-1.5">Trạng thái *</label>
+              <label className="ui-label">Trạng thái *</label>
               <select 
                 value={formData.status}
                 onChange={e => setFormData({...formData, status: e.target.value})}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-medium text-slate-700"
+                className="ui-select"
                 data-test-id="user-modal-select-status"
               >
                 <option value="ACTIVE" data-test-id="user-modal-option-active">Active</option>
@@ -127,18 +127,18 @@ const UserModal = ({ isOpen, onClose, onSubmit, initialData, currentUserEmail })
           </div>
 
           <div className="pt-4 flex gap-3">
-            <button 
+            <button
               type="button" 
               onClick={onClose}
-              className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-colors"
+              className="ui-btn ui-btn-secondary flex-1"
               data-test-id="user-modal-button-cancel"
             >
               Hủy bỏ
             </button>
-            <button 
+            <button
               type="submit" 
               disabled={isSubmitting}
-              className={`flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transition-all ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'active:scale-95'}`}
+              className={`ui-btn ui-btn-primary flex-1 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
               data-test-id="user-modal-button-submit"
             >
               {isSubmitting ? 'Đang xử lý...' : (initialData ? 'Cập nhật' : 'Thêm mới')}

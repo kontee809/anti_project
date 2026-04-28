@@ -61,17 +61,17 @@ const StationManagementPage = () => {
   };
 
   const getStatusColor = (status) => {
-    if (status === 'NORMAL') return 'bg-emerald-100 text-emerald-700';
-    if (status === 'WARNING') return 'bg-orange-100 text-orange-700';
-    if (status === 'DANGER') return 'bg-red-100 text-red-700';
-    return 'bg-slate-100 text-slate-700';
+    if (status === 'NORMAL') return 'badge-dark badge-dark-success';
+    if (status === 'WARNING') return 'badge-dark badge-dark-warning';
+    if (status === 'DANGER') return 'badge-dark badge-dark-danger';
+    return 'badge-dark badge-dark-neutral';
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto w-full" data-test-id="station-mgmt-page">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto w-full page-bg min-h-full" data-test-id="station-mgmt-page">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-slate-800">Quản lý Trạm Cảm biến</h1>
-        <button onClick={() => handleOpenModal()} className="px-4 py-2 bg-blue-600 text-white rounded-xl font-bold flex items-center gap-2 hover:bg-blue-700 transition" data-test-id="station-btn-add">
+        <button onClick={() => handleOpenModal()} className="ui-btn ui-btn-primary" data-test-id="station-btn-add">
           <Plus size={18} /> Thêm trạm mới
         </button>
       </div>
@@ -80,9 +80,9 @@ const StationManagementPage = () => {
         <IoTSimulatorPanel stations={stations} onUpdate={fetchStations} />
       )}
       
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-        <table className="w-full text-left" data-test-id="station-table">
-          <thead className="bg-slate-50 border-b border-slate-200">
+      <div className="ui-card overflow-hidden">
+        <table className="ui-table" data-test-id="station-table">
+          <thead>
             <tr>
               <th className="p-4 font-semibold text-slate-600">Mã trạm</th>
               <th className="p-4 font-semibold text-slate-600">Tên & Vị trí</th>
@@ -109,7 +109,7 @@ const StationManagementPage = () => {
                    <span className="text-orange-500">{s.thresholdWarning}m</span> / <span className="text-red-500">{s.thresholdDanger}m</span>
                 </td>
                 <td className="p-4">
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(s.status)}`}>{s.status}</span>
+                  <span className={getStatusColor(s.status)}>{s.status}</span>
                 </td>
                 <td className="p-4 text-xs font-medium text-slate-500">
                   {s.lastUpdated ? new Date(s.lastUpdated).toLocaleString('vi-VN') : 'Chưa có data'}

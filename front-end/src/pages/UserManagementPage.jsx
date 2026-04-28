@@ -6,7 +6,6 @@ import Pagination from '../components/UserManagement/Pagination';
 import SuccessDialog from '../components/SuccessDialog';
 import { Search, Plus } from 'lucide-react';
 import { getUsers, searchUsers, createUser, updateUser, deleteUser } from '../services/userService';
-import toast from 'react-hot-toast';
 
 const UserManagementPage = () => {
   const navigate = useNavigate();
@@ -154,17 +153,17 @@ const UserManagementPage = () => {
   if (role !== 'ADMIN') return null;
 
   return (
-    <div className="p-8 max-w-7xl mx-auto w-full pb-20" data-test-id="user-page">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto w-full pb-20 space-y-6 page-bg min-h-full" data-test-id="user-page">
       
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 fade-slide-in">
         <div>
           <h1 className="text-3xl font-bold text-slate-800" data-test-id="user-header-title">Quản lý người dùng</h1>
           <p className="text-slate-500 mt-2 font-medium">Phân quyền, theo dõi và quản lý tài khoản nhân sự</p>
         </div>
-        <button 
+        <button
           onClick={openAddModal}
           disabled={isLoading}
-          className={`flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-xl shadow-lg shadow-blue-500/30 transition-all whitespace-nowrap ${isLoading ? 'opacity-70 cursor-not-allowed' : 'active:scale-95'}`}
+          className={`ui-btn ui-btn-primary whitespace-nowrap ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
           data-test-id="user-button-add"
         >
           <Plus size={18} />
@@ -172,16 +171,16 @@ const UserManagementPage = () => {
         </button>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm">
-        <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+      <div className="ui-card overflow-hidden fade-slide-in" style={{ animationDelay: '80ms' }}>
+        <div className="p-4 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div className="relative w-full max-w-md">
-            <Search className="absolute left-3 top-3 text-slate-400" size={18} />
+            <Search className="absolute left-3 top-3.5 text-slate-400" size={18} />
             <input 
               type="text" 
               placeholder="Tìm kiếm theo tên hoặc email..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-medium text-slate-700 transition-all"
+              className="ui-input pl-10"
               data-test-id="user-input-search"
             />
           </div>
@@ -191,8 +190,11 @@ const UserManagementPage = () => {
         </div>
 
         {isLoading ? (
-          <div className="flex justify-center items-center py-20 text-slate-400">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <div className="p-6 space-y-3">
+            <div className="skeleton h-10 w-full" />
+            <div className="skeleton h-10 w-full" />
+            <div className="skeleton h-10 w-full" />
+            <div className="skeleton h-10 w-2/3" />
           </div>
         ) : (
           <UserTable 

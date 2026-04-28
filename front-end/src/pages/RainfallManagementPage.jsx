@@ -3,16 +3,16 @@ import { getAdminRainfallStations, createRainfallStation, updateRainfallStation,
 import { Plus, Edit, Trash2, X, CloudRain, Zap, Battery, Signal, Play, Square, Activity } from 'lucide-react';
 
 const INTENSITY_CONFIG = {
-  LIGHT: { label: 'Nhẹ', bg: 'bg-blue-100 text-blue-700' },
-  MODERATE: { label: 'Vừa', bg: 'bg-yellow-100 text-yellow-700' },
-  HEAVY: { label: 'Nặng', bg: 'bg-orange-100 text-orange-700' },
-  EXTREME: { label: 'Cực đoan', bg: 'bg-red-100 text-red-700' },
+  LIGHT: { label: 'Nhẹ', bg: 'badge-dark badge-dark-info' },
+  MODERATE: { label: 'Vừa', bg: 'badge-dark badge-dark-warning' },
+  HEAVY: { label: 'Nặng', bg: 'badge-dark badge-dark-warning' },
+  EXTREME: { label: 'Cực đoan', bg: 'badge-dark badge-dark-danger' },
 };
 
 const STATUS_CONFIG = {
-  ACTIVE: { label: 'Hoạt động', bg: 'bg-emerald-100 text-emerald-700' },
-  INACTIVE: { label: 'Không hoạt động', bg: 'bg-slate-100 text-slate-600' },
-  MAINTENANCE: { label: 'Bảo trì', bg: 'bg-amber-100 text-amber-700' },
+  ACTIVE: { label: 'Hoạt động', bg: 'badge-dark badge-dark-success' },
+  INACTIVE: { label: 'Không hoạt động', bg: 'badge-dark badge-dark-neutral' },
+  MAINTENANCE: { label: 'Bảo trì', bg: 'badge-dark badge-dark-warning' },
 };
 
 const RainfallManagementPage = () => {
@@ -93,13 +93,13 @@ const RainfallManagementPage = () => {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto w-full space-y-6" data-test-id="rainfall-mgmt-page">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto w-full space-y-6 page-bg min-h-full" data-test-id="rainfall-mgmt-page">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-slate-800">Quản lý Trạm Đo Mưa</h1>
           <p className="text-slate-500 mt-1 font-medium">Giám sát dữ liệu lượng mưa thời gian thực</p>
         </div>
-        <button onClick={() => handleOpenModal()} className="px-4 py-2.5 bg-indigo-600 text-white rounded-xl font-bold flex items-center gap-2 hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/20" data-test-id="rainfall-btn-add">
+        <button onClick={() => handleOpenModal()} className="ui-btn ui-btn-primary" data-test-id="rainfall-btn-add">
           <Plus size={18} /> Thêm trạm mới
         </button>
       </div>
@@ -133,10 +133,10 @@ const RainfallManagementPage = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+      <div className="ui-card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left" data-test-id="rainfall-table">
-            <thead className="bg-slate-50 border-b border-slate-200">
+          <table className="ui-table" data-test-id="rainfall-table">
+            <thead>
               <tr>
                 <th className="p-4 font-semibold text-slate-600 text-xs uppercase">Mã</th>
                 <th className="p-4 font-semibold text-slate-600 text-xs uppercase">Tên & Vị trí</th>

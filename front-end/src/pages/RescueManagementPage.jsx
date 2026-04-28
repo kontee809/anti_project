@@ -6,11 +6,11 @@ import { LifeBuoy, X, Check, ArrowRight, XCircle } from 'lucide-react';
 
 const createStatusBadge = (status) => {
   switch (status) {
-    case 'PENDING': return <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600">Mới gửi</span>;
-    case 'RECEIVED': return <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-600">Đã tiếp nhận</span>;
-    case 'IN_PROGRESS': return <span className="px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-600">Đang xử lý</span>;
-    case 'COMPLETED': return <span className="px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-600">Đã xong</span>;
-    case 'CANCELLED': return <span className="px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-600">Đã hủy</span>;
+    case 'PENDING': return <span className="badge-dark badge-dark-neutral">Mới gửi</span>;
+    case 'RECEIVED': return <span className="badge-dark badge-dark-info">Đã tiếp nhận</span>;
+    case 'IN_PROGRESS': return <span className="badge-dark badge-dark-warning">Đang xử lý</span>;
+    case 'COMPLETED': return <span className="badge-dark badge-dark-success">Đã xong</span>;
+    case 'CANCELLED': return <span className="badge-dark badge-dark-danger">Đã hủy</span>;
     default: return null;
   }
 };
@@ -54,12 +54,12 @@ const RescueManagementPage = () => {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto w-full" data-test-id="rescue-mgmt-page">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto w-full page-bg min-h-full" data-test-id="rescue-mgmt-page">
       <h1 className="text-3xl font-bold text-slate-800 mb-6">Quản lý Yêu cầu Cứu trợ</h1>
       
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+      <div className="ui-card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse" data-test-id="rescue-table">
+          <table className="ui-table" data-test-id="rescue-table">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200">
                 <th className="p-4 font-semibold text-slate-600">ID</th>
@@ -86,15 +86,15 @@ const RescueManagementPage = () => {
                   <td className="p-4 font-medium text-slate-500">{req.assignedTo || '-'}</td>
                   <td className="p-4 text-sm text-slate-500">{new Date(req.createdAt).toLocaleString('vi-VN')}</td>
                   <td className="p-4 flex gap-2 justify-end">
-                    <button onClick={() => setSelectedReq(req)} className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-semibold transition-colors" data-test-id={`rescue-btn-detail-${req.id}`}>Chi tiết</button>
+                    <button onClick={() => setSelectedReq(req)} className="ui-btn ui-btn-secondary ui-btn-sm" data-test-id={`rescue-btn-detail-${req.id}`}>Chi tiết</button>
                     {req.status === 'PENDING' && (
-                      <button onClick={() => handleAction(req.id, 'receive')} className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition-colors flex items-center gap-1" data-test-id={`rescue-btn-receive-${req.id}`}><Check size={14}/> Tiếp nhận</button>
+                      <button onClick={() => handleAction(req.id, 'receive')} className="ui-btn ui-btn-primary ui-btn-sm" data-test-id={`rescue-btn-receive-${req.id}`}><Check size={14}/> Tiếp nhận</button>
                     )}
                     {req.status === 'RECEIVED' && (
-                      <button onClick={() => { setSelectedReq(req); setShowAssignDialog(true); }} className="px-3 py-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-semibold transition-colors flex items-center gap-1" data-test-id={`rescue-btn-assign-${req.id}`}><ArrowRight size={14}/> Phân công</button>
+                      <button onClick={() => { setSelectedReq(req); setShowAssignDialog(true); }} className="ui-btn ui-btn-secondary ui-btn-sm bg-slate-800 text-slate-100 border-slate-700 hover:bg-slate-900" data-test-id={`rescue-btn-assign-${req.id}`}><ArrowRight size={14}/> Phân công</button>
                     )}
                     {req.status === 'IN_PROGRESS' && (
-                      <button onClick={() => handleAction(req.id, 'complete')} className="px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm font-semibold transition-colors flex items-center gap-1" data-test-id={`rescue-btn-complete-${req.id}`}><Check size={14}/> Hoàn thành</button>
+                      <button onClick={() => handleAction(req.id, 'complete')} className="ui-btn ui-btn-secondary ui-btn-sm bg-emerald-900 text-emerald-200 border-emerald-800 hover:bg-emerald-950" data-test-id={`rescue-btn-complete-${req.id}`}><Check size={14}/> Hoàn thành</button>
                     )}
                     {(req.status === 'PENDING' || req.status === 'RECEIVED') && (
                       <button onClick={() => handleAction(req.id, 'cancel')} className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Hủy" data-test-id={`rescue-btn-cancel-${req.id}`}><XCircle size={18}/></button>

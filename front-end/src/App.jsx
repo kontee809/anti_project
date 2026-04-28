@@ -16,6 +16,7 @@ import FloodAlertManagementPage from './pages/FloodAlertManagementPage';
 import StationDetailPage from './pages/StationDetailPage';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   console.log("App.jsx: Rendering App component");
@@ -51,6 +52,19 @@ function App() {
           {/* Fallback routing */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        <Toaster
+          position="bottom-right"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              borderRadius: '10px',
+              border: '1px solid #E2E8F0',
+              boxShadow: '0 10px 15px rgba(0,0,0,0.08), 0 4px 6px rgba(0,0,0,0.05)',
+              color: '#0F172A',
+              background: '#FFFFFF',
+            },
+          }}
+        />
       </AuthProvider>
     </BrowserRouter>
   );

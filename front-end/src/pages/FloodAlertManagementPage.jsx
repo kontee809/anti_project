@@ -3,16 +3,16 @@ import { getAdminFloodAlerts, getFloodAlertStats, acknowledgeFloodAlert, resolve
 import { AlertTriangle, Bell, ShieldCheck, CheckCircle, XCircle, Search, Eye, X, Cpu, Droplets, CloudRain, Activity, Wifi, WifiOff } from 'lucide-react';
 
 const RISK_CONFIG = {
-  LOW: { label: 'Thấp', bg: 'bg-blue-100 text-blue-700' },
-  MEDIUM: { label: 'Trung bình', bg: 'bg-yellow-100 text-yellow-700' },
-  HIGH: { label: 'Cao', bg: 'bg-orange-100 text-orange-700' },
-  CRITICAL: { label: 'Nghiêm trọng', bg: 'bg-red-100 text-red-700' },
+  LOW: { label: 'Thấp', bg: 'badge-dark badge-dark-info' },
+  MEDIUM: { label: 'Trung bình', bg: 'badge-dark badge-dark-warning' },
+  HIGH: { label: 'Cao', bg: 'badge-dark badge-dark-warning' },
+  CRITICAL: { label: 'Nghiêm trọng', bg: 'badge-dark badge-dark-danger' },
 };
 
 const STATUS_CONFIG = {
-  ACTIVE: { label: 'Đang hoạt động', bg: 'bg-red-100 text-red-700' },
-  ACKNOWLEDGED: { label: 'Đã xác nhận', bg: 'bg-amber-100 text-amber-700' },
-  RESOLVED: { label: 'Đã xử lý', bg: 'bg-emerald-100 text-emerald-700' },
+  ACTIVE: { label: 'Đang hoạt động', bg: 'badge-dark badge-dark-danger' },
+  ACKNOWLEDGED: { label: 'Đã xác nhận', bg: 'badge-dark badge-dark-warning' },
+  RESOLVED: { label: 'Đã xử lý', bg: 'badge-dark badge-dark-success' },
 };
 
 const FloodAlertManagementPage = () => {
@@ -73,7 +73,7 @@ const FloodAlertManagementPage = () => {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto w-full space-y-6" data-test-id="flood-alert-page">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto w-full space-y-6 page-bg min-h-full" data-test-id="flood-alert-page">
       {toast && (
         <div className="fixed top-24 right-8 z-50 px-5 py-3 rounded-xl font-bold shadow-xl text-sm bg-emerald-500 text-white flex items-center gap-2" data-test-id="flood-alert-toast">
           <CheckCircle size={18} />{toast}
@@ -154,10 +154,10 @@ const FloodAlertManagementPage = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+      <div className="ui-card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left" data-test-id="flood-alert-table">
-            <thead className="bg-slate-50 border-b border-slate-200">
+          <table className="ui-table" data-test-id="flood-alert-table">
+            <thead>
               <tr>
                 <th className="p-4 font-semibold text-slate-600 text-xs uppercase">ID</th>
                 <th className="p-4 font-semibold text-slate-600 text-xs uppercase">Vị trí</th>

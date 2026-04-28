@@ -57,7 +57,7 @@ const SupportRequestPage = () => {
     fetchCurrentLocation();
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async () => {
     if (!position && addressMode === 'map') {
       throw new Error("Vui lòng đợi tải vị trí trên bản đồ.");
     }
